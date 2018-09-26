@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2017-12-05">
+<meta name="date" content="2018-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -136,6 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#toast"><i class="fa fa-check"></i>Toast</a></li>
 </ul></li>
 <li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#adding-interaction"><i class="fa fa-check"></i><b>1.5</b> Adding Interaction</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#kotlin-setup"><i class="fa fa-check"></i><b>1.6</b> Kotlin</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html"><i class="fa fa-check"></i><b>2</b> Resources and Layouts</a><ul>
 <li class="chapter" data-level="2.1" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html#resources"><i class="fa fa-check"></i><b>2.1</b> Resources</a><ul>
@@ -317,7 +318,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="19" data-path="maps.html"><a href="maps.html"><i class="fa fa-check"></i><b>19</b> Maps</a><ul>
 <li class="chapter" data-level="19.1" data-path="maps.html"><a href="maps.html#create-a-map-activity"><i class="fa fa-check"></i><b>19.1</b> Create a Map Activity</a><ul>
 <li class="chapter" data-level="" data-path="maps.html"><a href="maps.html#getting-an-api-key"><i class="fa fa-check"></i>Getting an API Key</a></li>
-<li class="chapter" data-level="19.1.1" data-path="maps.html"><a href="maps.html#the-supportmapfragment"><i class="fa fa-check"></i><b>19.1.1</b> The <code class="unnumbered">SupportMapFragment</code></a></li>
+<li><a href="maps.html#the-supportmapfragment">The <code>SupportMapFragment</code></a></li>
 </ul></li>
 <li class="chapter" data-level="19.2" data-path="maps.html"><a href="maps.html#specifying-the-user-interface"><i class="fa fa-check"></i><b>19.2</b> Specifying the User Interface</a></li>
 <li class="chapter" data-level="19.3" data-path="maps.html"><a href="maps.html#markers-and-drawings"><i class="fa fa-check"></i><b>19.3</b> Markers and Drawings</a><ul>
@@ -393,20 +394,20 @@ The code for these exercises can be found at <a href="https://github.com/info448
 </ol>
 <p>Compiling is done with the <code>javac</code> (“java compile”) command. For example, from inside the code repo’s directory, you can compile both the <code>.java</code> files with:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Compile all .java files</span>
-<span class="kw">javac</span> src/main/java/edu/info448/review/*.java</code></pre></div>
+<span class="ex">javac</span> src/main/java/edu/info448/review/*.java</code></pre></div>
 <p>Running is then done with the <code>java</code> command: you specify the full package name of the class you wish to run, as well as the <a href="https://docs.oracle.com/javase/tutorial/essential/environment/paths.html">classpath</a> so that Java knows where to go find classes it depends on:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Runs the Tester#main() method with the `src/main/java` folder as the classpath</span>
-<span class="kw">java</span> -classpath ./src/main/java edu.info448.review.Tester</code></pre></div>
+<span class="ex">java</span> -classpath ./src/main/java edu.info448.review.Tester</code></pre></div>
 <p><strong><em>Practice: Compile and run this application now.</em></strong></p>
 <p><strong><em>Practice: Modify the <code>Dog</code> class so that it’s <code>.bark()</code> method barks twice (<code>&quot;Bark Bark!&quot;</code>). What do you have to do to test that your change worked?</em></strong></p>
 <p>You may notice that this development cycle can get pretty tedious: there are two commands we need to execute to run our code, and both are complex enough that they are a pain to retype.</p>
 <p>Enter <a href="https://gradle.org/"><strong>Gradle</strong></a>. Gradle is a build automation system: a “script” that you can run that will automatically perform the multiple steps required to build and run an application. This script is defined by the <code>build.gradle</code> configuration file. <strong><em>Practice: open that file and look through its contents</em></strong>. The <code>task run()</code> is where the “run” task is defined: do you see how it defines the same arguments we otherwise passed to the <code>java</code> command?</p>
 <p>You can run the version of Gradle included in the repo with the <code>gradlew &lt;task&gt;</code> command, specifying what task you want to the build system to perform. For example:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># on Mac/Linux</span>
-<span class="kw">./gradlew</span> tasks
+<span class="ex">./gradlew</span> tasks
 
 <span class="co"># on Windows</span>
-<span class="kw">gradlew</span> tasks</code></pre></div>
+<span class="ex">gradlew</span> tasks</code></pre></div>
 <p>Will give you a list of available tasks. Use <code>gradlew classes</code> to compile the code, and <code>gradlew run</code> to compile <em>and</em> run the code.</p>
 <ul>
 <li><strong>Helpful hint</strong>: you can specify the “quite” flag with <code>gradlew -q &lt;task&gt;</code> to not have Gradle output its build status (handy for the <code>run</code> task)</li>
@@ -430,7 +431,7 @@ The code for these exercises can be found at <a href="https://github.com/info448
 </ol>
 <p>Notice that one of the methods, <code>.createPuppies()</code> is a <code>static</code> method. This means that the method belongs to the <strong><em>class</em></strong>, not to individual object instances of the class! <strong><em>Practice: try running the following code (by placing it in the <code>main()</code> method of the <code>Tester</code> class)</em></strong>:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">Dog[] pups = Dog.<span class="fu">createPuppies</span>(<span class="dv">3</span>);
-System.<span class="fu">out</span>.<span class="fu">println</span>(Arrays.<span class="fu">toString</span>(pups));</code></pre></div>
+<span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="bu">Arrays</span>.<span class="fu">toString</span>(pups));</code></pre></div>
 <p>Notice that to call the <code>createPuppies()</code> method you didn’t need to have a <code>Dog</code> object (you didn’t need to use the <code>new</code> keyword): instead you went to the “template” for a <code>Dog</code> and told that template to do some work. <em>Non-static</em> methods (ones without the <code>static</code> keyword, also called “instance methods”) need to be called on an object.</p>
 <p><strong><em>Practice: Try to run the code <code>Dog.bark()</code>. What happens?</em></strong> This is because you can’t tell the “template” for a <code>Dog</code> to bark, only an actual <code>Dog</code> object!</p>
 <p>In general, in 98% of cases, your methods should <strong>not</strong> be <code>static</code>, because you want to call them on a specific object rather than on a general “template” for objects. Variables should <strong>never</strong> be static, unless they are <strong>also</strong> <code>final</code> constants (like the <code>BEST_BREED</code> variable).</p>
@@ -441,7 +442,7 @@ System.<span class="fu">out</span>.<span class="fu">println</span>(Arrays.<span 
 <div id="inheritance" class="section level2">
 <h2><span class="header-section-number">A.3</span> Inheritance</h2>
 <p><strong><em>Practice: Create a new file <code>Husky.java</code> that declares a new <code>Husky</code> class:</em></strong></p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">package edu.info448.review;</span> <span class="co">//package declaration (needed)</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">package</span><span class="im"> edu.info448.review;</span> <span class="co">//package declaration (needed)</span>
 
 <span class="kw">public</span> <span class="kw">class</span> Husky <span class="kw">extends</span> Dog {
   <span class="co">/* class body goes here */</span>
@@ -461,7 +462,7 @@ System.<span class="fu">out</span>.<span class="fu">println</span>(Arrays.<span 
 <div id="interfaces" class="section level2">
 <h2><span class="header-section-number">A.4</span> Interfaces</h2>
 <p><strong><em>Practice: Create a new file <code>Huggable.java</code> with the following code:</em></strong></p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">package edu.info448.review;</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">package</span><span class="im"> edu.info448.review;</span>
 
 <span class="kw">public</span> <span class="kw">interface</span> Huggable {
   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">hug</span>();
@@ -509,7 +510,7 @@ Husky v4 = <span class="kw">new</span> <span class="fu">TeddyBear</span>();</cod
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">Dog v1 = <span class="kw">new</span> <span class="fu">Husky</span>();
 Husky v2 = (Husky)v1; <span class="co">//legal casting</span></code></pre></div>
 <p>The biggest benefit from polymorphism is abstraction. Consider:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ArrayList&lt;Huggable&gt; hugList = <span class="kw">new</span> ArrayList&lt;Huggable&gt;(); <span class="co">//a list of huggable things</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">ArrayList</span>&lt;Huggable&gt; hugList = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;Huggable&gt;(); <span class="co">//a list of huggable things</span>
 hugList.<span class="fu">add</span>(<span class="kw">new</span> <span class="fu">Husky</span>()); <span class="co">//a Husky is Huggable</span>
 hugList.<span class="fu">add</span>(<span class="kw">new</span> <span class="fu">TeddyBear</span>()); <span class="co">//so are Teddybears!</span>
 
@@ -554,20 +555,20 @@ hugList.<span class="fu">add</span>(<span class="kw">new</span> <span class="fu"
 <h2><span class="header-section-number">A.8</span> Nested Classes</h2>
 <p>One last piece: we’ve been putting <em>attributes</em> and <em>methods</em> into classes… but we can also define additional <em>classes</em> inside a class! These are called <a href="https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html"><strong>nested</strong> or <strong>inner classes</strong></a>.</p>
 <p>We’ll often nest “helper classes” inside a bigger class: for example, you may have put a <code>Node</code> class inside a <code>LinkedList</code> class:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> LinkedList {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> <span class="bu">LinkedList</span> {
   <span class="co">//nested class</span>
-  <span class="kw">public</span> <span class="kw">class</span> Node {
+  <span class="kw">public</span> <span class="kw">class</span> <span class="bu">Node</span> {
     <span class="kw">private</span> <span class="dt">int</span> data;
 
-    <span class="kw">public</span> Node(<span class="dt">int</span> data) {
+    <span class="kw">public</span> <span class="bu">Node</span>(<span class="dt">int</span> data) {
       <span class="kw">this</span>.<span class="fu">data</span> = data;
     }
   }
 
-  <span class="kw">private</span> Node start;
+  <span class="kw">private</span> <span class="bu">Node</span> start;
 
-  <span class="kw">public</span> LinkedList() {
-    <span class="kw">this</span>.<span class="fu">start</span> = <span class="kw">new</span> Node(<span class="dv">448</span>);
+  <span class="kw">public</span> <span class="bu">LinkedList</span>() {
+    <span class="kw">this</span>.<span class="fu">start</span> = <span class="kw">new</span> <span class="bu">Node</span>(<span class="dv">448</span>);
   }
 }</code></pre></div>
 <p>Or maybe we want to define a <code>Smell</code> class inside the <code>Dog</code> class to represent different smells, allowing us to talk about different <code>Dog.Smell</code> objects. (And of course, the <code>Dog.Smell</code> class would implement the <code>Sniffable</code> interface…)</p>

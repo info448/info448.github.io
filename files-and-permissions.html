@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2017-12-05">
+<meta name="date" content="2018-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -136,6 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#toast"><i class="fa fa-check"></i>Toast</a></li>
 </ul></li>
 <li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#adding-interaction"><i class="fa fa-check"></i><b>1.5</b> Adding Interaction</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#kotlin-setup"><i class="fa fa-check"></i><b>1.6</b> Kotlin</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html"><i class="fa fa-check"></i><b>2</b> Resources and Layouts</a><ul>
 <li class="chapter" data-level="2.1" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html#resources"><i class="fa fa-check"></i><b>2.1</b> Resources</a><ul>
@@ -317,7 +318,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="19" data-path="maps.html"><a href="maps.html"><i class="fa fa-check"></i><b>19</b> Maps</a><ul>
 <li class="chapter" data-level="19.1" data-path="maps.html"><a href="maps.html#create-a-map-activity"><i class="fa fa-check"></i><b>19.1</b> Create a Map Activity</a><ul>
 <li class="chapter" data-level="" data-path="maps.html"><a href="maps.html#getting-an-api-key"><i class="fa fa-check"></i>Getting an API Key</a></li>
-<li class="chapter" data-level="19.1.1" data-path="maps.html"><a href="maps.html#the-supportmapfragment"><i class="fa fa-check"></i><b>19.1.1</b> The <code class="unnumbered">SupportMapFragment</code></a></li>
+<li><a href="maps.html#the-supportmapfragment">The <code>SupportMapFragment</code></a></li>
 </ul></li>
 <li class="chapter" data-level="19.2" data-path="maps.html"><a href="maps.html#specifying-the-user-interface"><i class="fa fa-check"></i><b>19.2</b> Specifying the User Interface</a></li>
 <li class="chapter" data-level="19.3" data-path="maps.html"><a href="maps.html#markers-and-drawings"><i class="fa fa-check"></i><b>19.3</b> Markers and Drawings</a><ul>
@@ -409,8 +410,8 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 </ul>
 <p>Because a device’s External storage may be on removable media, in order to interact with it in any way we first need to check whether it is available (e.g., that the SD card is mounted). This can be done with the following <a href="https://developer.android.com/guide/topics/data/data-storage.html#MediaAvail">check</a> (written as a helper method so it can be reused):</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">static</span> <span class="dt">boolean</span> <span class="fu">isExternalStorageWritable</span>() {
-  String state = Environment.<span class="fu">getExternalStorageState</span>();
-  <span class="kw">if</span> (Environment.<span class="fu">MEDIA_MOUNTED</span>.<span class="fu">equals</span>(state)) {
+  <span class="bu">String</span> state = <span class="bu">Environment</span>.<span class="fu">getExternalStorageState</span>();
+  <span class="kw">if</span> (<span class="bu">Environment</span>.<span class="fu">MEDIA_MOUNTED</span>.<span class="fu">equals</span>(state)) {
     <span class="kw">return</span> <span class="kw">true</span>;
   }
   <span class="kw">return</span> <span class="kw">false</span>;
@@ -440,17 +441,17 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 </ul>
 <p>First we <em>still</em> need to request permission in the <code>Manifest</code>; if we haven’t announced that we might ask for permission, we won’t be allowed to ask for it in the future. In particular, saving files to External storage requires <code>android.permission.WRITE_EXTERNAL_STORAGE</code> permission (which will also grant us <code>READ_EXTERNAL_STORAGE</code> access).</p>
 <p>Before we perform a dangerous action, we can check that we currently have permission:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="dt">int</span> permissionCheck = ContextCompat.<span class="fu">checkSelfPermission</span>(activity, Manifest.<span class="fu">permission</span>.<span class="fu">PERMISSION_NAME</span>);</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="dt">int</span> permissionCheck = ContextCompat.<span class="fu">checkSelfPermission</span>(activity, <span class="bu">Manifest</span>.<span class="fu">permission</span>.<span class="fu">PERMISSION_NAME</span>);</code></pre></div>
 <ul>
 <li>This function basically “looks up” whether the app has <em>currently</em> been granted a particular permission or not. It will return either <code>PackageManager.PERMISSION_GRANTED</code> or <code>PackageManager.PERMISSION_DENIED</code>.</li>
 </ul>
 <p>If permission has been granted, great! We can go about our business (e.g., saving a file to external storage). But if permission has NOT been explicitly granted (at runtime), then we have to ask for it. We do this by calling:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ActivityCompat.<span class="fu">requestPermissions</span>(activity, <span class="kw">new</span> String[]{Manifest.<span class="fu">permission</span>.<span class="fu">PERMISSION_NAME</span>}, REQUEST_CODE);</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ActivityCompat.<span class="fu">requestPermissions</span>(activity, <span class="kw">new</span> <span class="bu">String</span>[]{<span class="bu">Manifest</span>.<span class="fu">permission</span>.<span class="fu">PERMISSION_NAME</span>}, REQUEST_CODE);</code></pre></div>
 <ul>
 <li>This method takes a Context and an <em>array</em> of permissions that we need access to (in case we need more than one). We also provide a request ID code (an <code>int</code>), which we can use to identify that particular request for permission in a callback that will be executed when the user chooses whether to give us access or not. This is the same pattern as when we sent an Intent for a <em>result</em>; asking for permission is conceptually like sending an Intent to the permission system!</li>
 </ul>
 <p>We can then provide the callback that will be executed when the user decides whether to grant us permission or not:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">onRequestPermissionsResult</span>(<span class="dt">int</span> requestCode, String permissions[], <span class="dt">int</span>[] grantResults) {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">onRequestPermissionsResult</span>(<span class="dt">int</span> requestCode, <span class="bu">String</span> permissions[], <span class="dt">int</span>[] grantResults) {
   <span class="kw">switch</span> (requestCode) {
     <span class="kw">case</span> REQUEST_CODE:
       <span class="kw">if</span> (grantResults.<span class="fu">length</span> &gt; <span class="dv">0</span> &amp;&amp; grantResults[<span class="dv">0</span>] == PackageManager.<span class="fu">PERMISSION_GRANTED</span>) {
@@ -489,36 +490,36 @@ We can actually look at the emulator’s file-system and see our files be create
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//writing</span>
 <span class="kw">try</span> {
     <span class="co">//saving in public Documents directory</span>
-    File dir = <span class="fu">getExternalStoragePublicDirectory</span>(Environment.<span class="fu">DIRECTORY_DOCUMENTS</span>);
+    <span class="bu">File</span> dir = <span class="fu">getExternalStoragePublicDirectory</span>(<span class="bu">Environment</span>.<span class="fu">DIRECTORY_DOCUMENTS</span>);
     <span class="kw">if</span> (!dir.<span class="fu">exists</span>()) { dir.<span class="fu">mkdirs</span>(); } <span class="co">//make dir if doesn&#39;t otherwise exist (pre-19)</span>
-    File file = <span class="kw">new</span> File(dir, FILE_NAME);
+    <span class="bu">File</span> file = <span class="kw">new</span> <span class="bu">File</span>(dir, FILE_NAME);
     Log.<span class="fu">v</span>(TAG, <span class="st">&quot;Saving to  &quot;</span> + file.<span class="fu">getAbsolutePath</span>());
 
-    PrintWriter out = <span class="kw">new</span> PrintWriter(<span class="kw">new</span> FileWriter(file, <span class="kw">true</span>));
+    <span class="bu">PrintWriter</span> out = <span class="kw">new</span> <span class="bu">PrintWriter</span>(<span class="kw">new</span> <span class="bu">FileWriter</span>(file, <span class="kw">true</span>));
     out.<span class="fu">println</span>(textEntry.<span class="fu">getText</span>().<span class="fu">toString</span>());
     out.<span class="fu">close</span>();
-} <span class="kw">catch</span> (IOException ioe) {
+} <span class="kw">catch</span> (<span class="bu">IOException</span> ioe) {
     Log.<span class="fu">d</span>(TAG, Log.<span class="fu">getStackTraceString</span>(ioe));
 }
 
 <span class="co">//reading</span>
 <span class="kw">try</span> {
-    File dir = <span class="fu">getExternalStoragePublicDirectory</span>(Environment.<span class="fu">DIRECTORY_DOCUMENTS</span>);
-    File file = <span class="kw">new</span> File(dir, FILE_NAME);
+    <span class="bu">File</span> dir = <span class="fu">getExternalStoragePublicDirectory</span>(<span class="bu">Environment</span>.<span class="fu">DIRECTORY_DOCUMENTS</span>);
+    <span class="bu">File</span> file = <span class="kw">new</span> <span class="bu">File</span>(dir, FILE_NAME);
     <span class="kw">if</span>(!file.<span class="fu">exists</span>()) <span class="kw">return</span>; <span class="co">//e.g., if file doesn&#39;t exist yet</span>
-    BufferedReader reader = <span class="kw">new</span> BufferedReader(<span class="kw">new</span> FileReader(file));
-    StringBuilder text = <span class="kw">new</span> StringBuilder();
+    <span class="bu">BufferedReader</span> reader = <span class="kw">new</span> <span class="bu">BufferedReader</span>(<span class="kw">new</span> <span class="bu">FileReader</span>(file));
+    <span class="bu">StringBuilder</span> text = <span class="kw">new</span> <span class="bu">StringBuilder</span>();
 
     <span class="co">//read the file</span>
-    String line = reader.<span class="fu">readLine</span>();
+    <span class="bu">String</span> line = reader.<span class="fu">readLine</span>();
     <span class="kw">while</span> (line != <span class="kw">null</span>) {
-        text.<span class="fu">append</span>(line + <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>);
+        text.<span class="fu">append</span>(line + <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>);
         line = reader.<span class="fu">readLine</span>();
     }
 
     textDisplay.<span class="fu">setText</span>(text.<span class="fu">toString</span>());
     reader.<span class="fu">close</span>();
-} <span class="kw">catch</span> (IOException ioe) {
+} <span class="kw">catch</span> (<span class="bu">IOException</span> ioe) {
     Log.<span class="fu">d</span>(TAG, Log.<span class="fu">getStackTraceString</span>(ioe));
 }</code></pre></div>
 <p>This will allow us to have our “save” button write the message to the file, and have our “read” button load the message from the file (and display it on the screen)!</p>
@@ -555,17 +556,17 @@ We can actually look at the emulator’s file-system and see our files be create
 <p>To review: we sent an <code>Intent</code> with the <code>MediaStore.ACTION_IMAGE_CAPTURE</code> action, and the <em>result</em> of that <code>Intent</code> included an <em>Extra</em> that was a <code>BitMap</code> of a low-quality thumbnail for the image. But if we want to save a higher resolution version of that picture, we’ll need to store that image in the file system!</p>
 <p>To do this, we’re actually going to modify the <code>Intent</code> we <em>send</em> so it includes an additional Extra: a file in which the picture data can be saved. Effectively, we’ll have <em>our Activity</em> allocate some memory for the picture, and then tell the Camera where it can put the picture data that it captures. (Intent envelops are too small to carry entire photos around!)</p>
 <p>Before we send the <code>Intent</code>, we’re going to go ahead and create an (empty) file:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">File file = <span class="kw">null</span>;
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">File</span> file = <span class="kw">null</span>;
 <span class="kw">try</span> {
-    String timestamp = <span class="kw">new</span> SimpleDateFormat(<span class="st">&quot;yyyyMMdd_HHmmss&quot;</span>)<span class="fu">.format</span>(<span class="kw">new</span> Date()); <span class="co">//include timestamp</span>
+    <span class="bu">String</span> timestamp = <span class="kw">new</span> <span class="bu">SimpleDateFormat</span>(<span class="st">&quot;yyyyMMdd_HHmmss&quot;</span>)<span class="fu">.format</span>(<span class="kw">new</span> <span class="bu">Date</span>()); <span class="co">//include timestamp</span>
 
     <span class="co">//ideally should check for permission here, skipping for time</span>
-    File dir = Environment.<span class="fu">getExternalStoragePublicDirectory</span>(Environment.<span class="fu">DIRECTORY_PICTURES</span>);
-    file = <span class="kw">new</span> File(dir, <span class="st">&quot;PIC_&quot;</span>+timestamp+<span class="st">&quot;.jpg&quot;</span>);
+    <span class="bu">File</span> dir = <span class="bu">Environment</span>.<span class="fu">getExternalStoragePublicDirectory</span>(<span class="bu">Environment</span>.<span class="fu">DIRECTORY_PICTURES</span>);
+    file = <span class="kw">new</span> <span class="bu">File</span>(dir, <span class="st">&quot;PIC_&quot;</span>+timestamp+<span class="st">&quot;.jpg&quot;</span>);
     <span class="dt">boolean</span> created = file.<span class="fu">createNewFile</span>(); <span class="co">//actually make the file!</span>
     Log.<span class="fu">v</span>(TAG, <span class="st">&quot;File created: &quot;</span>+created);
 
-} <span class="kw">catch</span> (IOException ioe) {
+} <span class="kw">catch</span> (<span class="bu">IOException</span> ioe) {
     Log.<span class="fu">d</span>(TAG, Log.<span class="fu">getStackTraceString</span>(ioe));
 }</code></pre></div>
 <p>We will then specify an additional Extra to give that file’s location to the camera: if we use <code>MediaStore.EXTRA_OUTPUT</code> as our Extra’s <em>key</em>, the camera will know what to do with that! However, the extra won’t actually be the <code>File</code> but a <strong>Uri</strong> (recall: the “url” or location of a file). We’re not sending the file itself, but the <strong><em>location</em></strong> of that file (because it’s smaller data to fit in the Intent envelope).</p>
@@ -592,9 +593,9 @@ intent.<span class="fu">putExtra</span>(Intent.<span class="fu">EXTRA_STREAM</sp
 }</code></pre></div>
 <p>There is one complication though: because we’re saving files in External storage, the app who is executing the <code>ACTION_SEND</code> will need to have permission to read the file (e.g., to access External storage). The Messenger app on the emulator appears to lack this permission by default, so we need to take a slightly different approach:</p>
 <p>Rather than putting the <code>file://</code> Uri in the Intent’s extra, we’ll need to create a <code>content://</code> Uri for a <em>ContentProvider</em> who is able to provide files to anyone who requests them regardless of permissions (the provider grants permission to access its content). Luckily, each image stored in the public directories is automatically tracked by a ContentProvider known as the <a href="https://developer.android.com/reference/android/provider/MediaStore.html"><code>MediaStore</code></a>. It easy to fetch a <code>content://</code> Uri for a particular image file from this provider:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">MediaScannerConnection.<span class="fu">scanFile</span>(<span class="kw">this</span>, <span class="kw">new</span> String[] { file.<span class="fu">toString</span>(); }, <span class="kw">null</span>,
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">MediaScannerConnection.<span class="fu">scanFile</span>(<span class="kw">this</span>, <span class="kw">new</span> <span class="bu">String</span>[] { file.<span class="fu">toString</span>(); }, <span class="kw">null</span>,
         <span class="kw">new</span> MediaScannerConnection.<span class="fu">OnScanCompletedListener</span>() {
-            <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onScanCompleted</span>(String path, Uri uri) {
+            <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onScanCompleted</span>(<span class="bu">String</span> path, Uri uri) {
                 mediaStoreUri = uri;  <span class="co">//save the content:// Uri for later</span>
                 Log.<span class="fu">v</span>(TAG, <span class="st">&quot;MediaStore Uri: &quot;</span>+uri);
             }

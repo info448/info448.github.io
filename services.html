@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2017-12-05">
+<meta name="date" content="2018-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -136,6 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#toast"><i class="fa fa-check"></i>Toast</a></li>
 </ul></li>
 <li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#adding-interaction"><i class="fa fa-check"></i><b>1.5</b> Adding Interaction</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#kotlin-setup"><i class="fa fa-check"></i><b>1.6</b> Kotlin</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html"><i class="fa fa-check"></i><b>2</b> Resources and Layouts</a><ul>
 <li class="chapter" data-level="2.1" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html#resources"><i class="fa fa-check"></i><b>2.1</b> Resources</a><ul>
@@ -317,7 +318,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="19" data-path="maps.html"><a href="maps.html"><i class="fa fa-check"></i><b>19</b> Maps</a><ul>
 <li class="chapter" data-level="19.1" data-path="maps.html"><a href="maps.html#create-a-map-activity"><i class="fa fa-check"></i><b>19.1</b> Create a Map Activity</a><ul>
 <li class="chapter" data-level="" data-path="maps.html"><a href="maps.html#getting-an-api-key"><i class="fa fa-check"></i>Getting an API Key</a></li>
-<li class="chapter" data-level="19.1.1" data-path="maps.html"><a href="maps.html#the-supportmapfragment"><i class="fa fa-check"></i><b>19.1.1</b> The <code class="unnumbered">SupportMapFragment</code></a></li>
+<li><a href="maps.html#the-supportmapfragment">The <code>SupportMapFragment</code></a></li>
 </ul></li>
 <li class="chapter" data-level="19.2" data-path="maps.html"><a href="maps.html#specifying-the-user-interface"><i class="fa fa-check"></i><b>19.2</b> Specifying the User Interface</a></li>
 <li class="chapter" data-level="19.3" data-path="maps.html"><a href="maps.html#markers-and-drawings"><i class="fa fa-check"></i><b>19.3</b> Markers and Drawings</a><ul>
@@ -399,13 +400,13 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 <p>For example, if you call two methods one after the other, then the second method execute will “wait” for the first one to finished:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">countUp</span>() {
     <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>; i&lt;<span class="dv">1000</span>; i++){
-        System.<span class="fu">out</span>.<span class="fu">println</span>(i);
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(i);
     }
 }
 
 <span class="kw">public</span> <span class="dt">void</span> <span class="fu">countDown</span>() {
     <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>; i&gt; -<span class="dv">1000</span>; i--){
-        System.<span class="fu">out</span>.<span class="fu">println</span>(i);
+        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(i);
     }
 }
 
@@ -496,9 +497,9 @@ Learning Android Development involves knowing about what classes exist, and can 
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">for</span>(<span class="dt">int</span> count=<span class="dv">0</span>; count&lt;=<span class="dv">10</span>; count++){
     Log.<span class="fu">v</span>(TAG, <span class="st">&quot;Count: &quot;</span>+count);
     <span class="kw">try</span> {
-        Thread.<span class="fu">sleep</span>(<span class="dv">2000</span>); <span class="co">//sleep for 2 seconds</span>
-    } <span class="kw">catch</span> (InterruptedException e) {
-        Thread.<span class="fu">currentThread</span>().<span class="fu">interrupt</span>();
+        <span class="bu">Thread</span>.<span class="fu">sleep</span>(<span class="dv">2000</span>); <span class="co">//sleep for 2 seconds</span>
+    } <span class="kw">catch</span> (<span class="bu">InterruptedException</span> e) {
+        <span class="bu">Thread</span>.<span class="fu">currentThread</span>().<span class="fu">interrupt</span>();
     }
 }</code></pre></div></li>
 </ul>
@@ -515,8 +516,8 @@ Learning Android Development involves knowing about what classes exist, and can 
 <p>We can perform this communication using a <a href="https://developer.android.com/reference/android/os/Handler.html"><code>Handler</code></a>, which is an object used to pass messages between Threads—it “handles” the messages!</p>
 <ul>
 <li><p>We instantiate a <code>new Handler()</code> object (e.g., in the Service’s <code>onCreate()</code> callback), calling a method on that object when we want to “send” a message. The easiest way to send a message is to use the <code>post()</code> function, which takes a <code>Runnable()</code> method which will be executed <em>on the Main Thread</em>:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">mHandler.<span class="fu">post</span>(<span class="kw">new</span> Runnable() {
-    <span class="fu">@Override</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">mHandler.<span class="fu">post</span>(<span class="kw">new</span> <span class="bu">Runnable</span>() {
+    <span class="at">@Override</span>
     <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() {
         Toast.<span class="fu">makeText</span>(CountingService.<span class="fu">this</span>, <span class="st">&quot;Count: &quot;</span> + count, Toast.<span class="fu">LENGTH_SHORT</span>).<span class="fu">show</span>();
     }
@@ -583,7 +584,7 @@ mediaPlayer.<span class="fu">start</span>(); <span class="co">// no need to call
 mediaPlayer = <span class="kw">null</span>;</code></pre></div>
 <p>We can also implement and register a <code>MediaPlayer.OnCompletionListener</code> to do something when a song finishes playing.</p>
 <p>Finally, it is possible to use <code>MediaPlayer</code> to play files from a <code>ContentProvider</code> or even off the Internet!</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">String url = <span class="st">&quot;http://........&quot;</span>; <span class="co">// your URL here</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">String</span> url = <span class="st">&quot;http://........&quot;</span>; <span class="co">// your URL here</span>
 MediaPlayer mediaPlayer = <span class="kw">new</span> <span class="fu">MediaPlayer</span>();
 mediaPlayer.<span class="fu">setAudioStreamType</span>(AudioManager.<span class="fu">STREAM_MUSIC</span>);
 mediaPlayer.<span class="fu">setDataSource</span>(url);
@@ -613,12 +614,12 @@ mediaPlayer.<span class="fu">start</span>();</code></pre></div>
 <p>To do this, we use what is called a <a href="https://developer.android.com/guide/components/services.html#Foreground"><strong>Foreground Service</strong></a>. Foreground Services represent Services that are divorced from Activities (they <em>are</em> Services after all), but the user is aware of them—and accordingly, have an even higher survival <a href="https://developer.android.com/guide/topics/processes/process-lifecycle.html">priority</a> if the OS gets low on memory!</p>
 <p>Foreground services require a <strong>Notification</strong> in the status bar, similar to the Notifications we’ve created before. This Notification will effectively act as the “user interface” for the Service, and let the user see and be aware of its execution!</p>
 <p>We create this Notification inside the Service’s <code>onStartCommand()</code> method, then pass it to the <code>startForeground()</code> method in order to put our Service in the foreground:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">String songName = <span class="st">&quot;The Entertainer&quot;</span>;
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">String</span> songName = <span class="st">&quot;The Entertainer&quot;</span>;
 
 PendingIntent pendingIntent = PendingIntent.<span class="fu">getActivity</span>(<span class="fu">getApplicationContext</span>(), <span class="dv">0</span>,
         <span class="kw">new</span> <span class="fu">Intent</span>(<span class="fu">getApplicationContext</span>(), MainActivity.<span class="fu">class</span>), PendingIntent.<span class="fu">FLAG_UPDATE_CURRENT</span>);
 
-Notification notification = <span class="kw">new</span> NotificationCompat.<span class="fu">Builder</span>(<span class="kw">this</span>)
+<span class="bu">Notification</span> notification = <span class="kw">new</span> NotificationCompat.<span class="fu">Builder</span>(<span class="kw">this</span>)
         .<span class="fu">setSmallIcon</span>(android.<span class="fu">R</span>.<span class="fu">drawable</span>.<span class="fu">ic_media_play</span>)
         .<span class="fu">setContentTitle</span>(<span class="st">&quot;Music Player&quot;</span>)
         .<span class="fu">setContentText</span>(<span class="st">&quot;Now playing: &quot;</span>+songName)
@@ -643,7 +644,7 @@ There are a couple of other details that you should handle if you’re making a 
 <p>We make a Bound Service by having the Service implement and utilize the <strong><code>onBind()</code></strong> callback. This method returns an <code>IBinder</code> object (the <code>I</code> indicates that it’s an <em>Interface</em>, following a Java convention common in enterprise software). When Activities connect to this Service (using the <code>bindService()</code> method), this <code>IBinder</code> object is passed to them, and they can use it to get access to the Service process to call methods on it. Effectively, the binding process produces an <em>object</em> that represents that Service, so Activities can call methods on the Service without needing to send it Intents!</p>
 <p>As an example, let’s add the ability to “pause” the music being played as a bound service:</p>
 <p>The first thing we need to do is have our Service implement the <code>onBind()</code> method. To do this, we will need an <code>IBinder</code> object to return (that is: an object of a class that implements the <code>IBinder</code> interface). For “local services” (e.g., Services that are run <em>in the same process</em>), the easiest way to get an <code>IBinder</code> is to extend the <code>Binder</code> class:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> MyBinder <span class="kw">extends</span> Binder { <span class="co">//implements IBinder</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> MyBinder <span class="kw">extends</span> <span class="bu">Binder</span> { <span class="co">//implements IBinder</span>
     <span class="co">//binder class methods will go here!</span>
 }
 
@@ -656,7 +657,7 @@ There are a couple of other details that you should handle if you’re making a 
 <ol style="list-style-type: decimal">
 <li><p>The <code>IBinder</code> can provide <code>public</code> methods for the Activity to call. These methods can then access instance variables of the Service (since the <code>MyBinder</code> is a nested class). This causes the <code>IBinder</code> to literally act as the “public interface” for the Service!</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//in MyBinder</span>
-<span class="kw">public</span> String <span class="fu">getSongName</span>() {
+<span class="kw">public</span> <span class="bu">String</span> <span class="fu">getSongName</span>() {
     <span class="kw">return</span> songName; <span class="co">//access Service instance variable</span>
 }</code></pre></div></li>
 <li><p>The <code>IBinder</code> can provide access to the Service itself (via a getter that returns the <code>Service</code> object). The Activity can then call any public methods provided by that <code>Service</code> class.</p>
@@ -671,7 +672,7 @@ There are a couple of other details that you should handle if you’re making a 
 <ul>
 <li>The Intent parameter should be addressed to the Service we want to bind.</li>
 <li><p>The <code>ServiceConnection</code> parameter is a reference to an object that implements the <code>ServiceConnection</code> interface, providing callbacks that can be executed when the Activity connects to the Service. We can have the Activity implement the interface, or create a separate anonymous class:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">/** Defines callbacks for service binding, passed to bindService() */</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">/**</span> Defines callbacks for service binding<span class="co">,</span> passed to bindService<span class="co">()</span> <span class="co">*/</span>
 <span class="kw">private</span> ServiceConnection mConnection = <span class="kw">new</span> <span class="fu">ServiceConnection</span>() {
     <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onServiceConnected</span>(ComponentName className, IBinder service) {
         <span class="co">// We&#39;ve bound to LocalService, cast the IBinder and get LocalService instance</span>

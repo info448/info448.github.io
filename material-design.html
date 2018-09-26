@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2017-12-05">
+<meta name="date" content="2018-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -136,6 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#toast"><i class="fa fa-check"></i>Toast</a></li>
 </ul></li>
 <li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#adding-interaction"><i class="fa fa-check"></i><b>1.5</b> Adding Interaction</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#kotlin-setup"><i class="fa fa-check"></i><b>1.6</b> Kotlin</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html"><i class="fa fa-check"></i><b>2</b> Resources and Layouts</a><ul>
 <li class="chapter" data-level="2.1" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html#resources"><i class="fa fa-check"></i><b>2.1</b> Resources</a><ul>
@@ -317,7 +318,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="19" data-path="maps.html"><a href="maps.html"><i class="fa fa-check"></i><b>19</b> Maps</a><ul>
 <li class="chapter" data-level="19.1" data-path="maps.html"><a href="maps.html#create-a-map-activity"><i class="fa fa-check"></i><b>19.1</b> Create a Map Activity</a><ul>
 <li class="chapter" data-level="" data-path="maps.html"><a href="maps.html#getting-an-api-key"><i class="fa fa-check"></i>Getting an API Key</a></li>
-<li class="chapter" data-level="19.1.1" data-path="maps.html"><a href="maps.html#the-supportmapfragment"><i class="fa fa-check"></i><b>19.1.1</b> The <code class="unnumbered">SupportMapFragment</code></a></li>
+<li><a href="maps.html#the-supportmapfragment">The <code>SupportMapFragment</code></a></li>
 </ul></li>
 <li class="chapter" data-level="19.2" data-path="maps.html"><a href="maps.html#specifying-the-user-interface"><i class="fa fa-check"></i><b>19.2</b> Specifying the User Interface</a></li>
 <li class="chapter" data-level="19.3" data-path="maps.html"><a href="maps.html#markers-and-drawings"><i class="fa fa-check"></i><b>19.3</b> Markers and Drawings</a><ul>
@@ -543,9 +544,9 @@ If you want to include a circular image in your card (or anywhere else in your a
 <li><p>You’ll notice that the Snackbar overlays the content (including the FAB). This will be addressed below by introducing a <code>CoordinatorLayout</code>.</p></li>
 </ul>
 <p>Additionally, it is possible to give Snackbar’s their own <em>action</em> that the user can activate by clicking on the Snackbar. This allows the bar to, for example, show a delete confirmation but providing an “undo” action. The action is specified by calling the <code>.setAction()</code> method on the Snackbar, and passing in a title for the action as well as an <code>OnClickListener</code>:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">mySnackbar.<span class="fu">setAction</span>(<span class="st">&quot;Click&quot;</span>, <span class="kw">new</span> View.<span class="fu">OnClickListener</span>() {
-    <span class="fu">@Override</span>
-    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onClick</span>(View view) {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">mySnackbar.<span class="fu">setAction</span>(<span class="st">&quot;Click&quot;</span>, <span class="kw">new</span> <span class="bu">View</span>.<span class="fu">OnClickListener</span>() {
+    <span class="at">@Override</span>
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onClick</span>(<span class="bu">View</span> view) {
         <span class="co">//...</span>
     }
 });</code></pre></div>
@@ -608,13 +609,13 @@ If you want to include a circular image in your card (or anywhere else in your a
 <p>First, we will create a new Java class to represent our <code>ShrinkBehavior</code>. This class will need to <code>extend CoordinatorLayout.Behavior&lt;FloatingActionButton&gt;</code> (because it is a <code>CoordinatorLayout.Behavior</code> and it will be applied to a <code>FloatingActionButton</code>).</p>
 <ul>
 <li><p>We will need also need to override the constructor so that we can declare/instantiate this class from the XML:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="fu">ShrinkBehavior</span>(Context context, AttributeSet attrs) {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="fu">ShrinkBehavior</span>(<span class="bu">Context</span> context, <span class="bu">AttributeSet</span> attrs) {
     <span class="kw">super</span>(context, attrs);
 }</code></pre></div></li>
 </ul>
 <p>The next step is to make sure the Behavior is able to react to changes in the Snackbar. To do this we have to make the Behavior report that is has the Snackbar as a <em>dependency</em>. This way when the CoordinatorLayout is propagating events and changes to all of its children, it will know that it should also inform the FAB about changes to the Snackbar. We do this by overriding the <code>layoutDependsOn()</code> method:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">boolean</span> <span class="fu">layoutDependsOn</span>(CoordinatorLayout parent,
-                               FloatingActionButton child, View dependency) {
+                               FloatingActionButton child, <span class="bu">View</span> dependency) {
     <span class="co">//add SnackbarLayout to the dependency list (if any)</span>
     <span class="kw">return</span> dependency <span class="kw">instanceof</span> Snackbar.<span class="fu">SnackbarLayout</span> ||
         <span class="kw">super</span>.<span class="fu">layoutDependsOn</span>(parent, child, dependency);
@@ -623,12 +624,12 @@ If you want to include a circular image in your card (or anywhere else in your a
 <li>(Technically the <code>super</code> class doesn’t have any other dependencies, but it’s still good practice to call up the tree).</li>
 </ul>
 <p>Finally, we can specify what should happen when one of the dependency’s Views change by overriding the <code>onDependentViewChange()</code> callback:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">boolean</span> <span class="fu">onDependentViewChanged</span>(CoordinatorLayout parent, FloatingActionButton child, View dependency) {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">boolean</span> <span class="fu">onDependentViewChanged</span>(CoordinatorLayout parent, FloatingActionButton child, <span class="bu">View</span> dependency) {
         <span class="kw">if</span>(dependency <span class="kw">instanceof</span> Snackbar.<span class="fu">SnackbarLayout</span>){
             <span class="co">//calculate how much Snackbar we see</span>
             <span class="dt">float</span> snackbarOffset = <span class="dv">0</span>;
             <span class="kw">if</span>(parent.<span class="fu">doViewsOverlap</span>(child, dependency)){
-                snackbarOffset = Math.<span class="fu">min</span>(snackbarOffset, dependency.<span class="fu">getTranslationY</span>() - dependency.<span class="fu">getHeight</span>());
+                snackbarOffset = <span class="bu">Math</span>.<span class="fu">min</span>(snackbarOffset, dependency.<span class="fu">getTranslationY</span>() - dependency.<span class="fu">getHeight</span>());
             }
             <span class="dt">float</span> scaleFactor = <span class="dv">1</span> - (-snackbarOffset/dependency.<span class="fu">getHeight</span>());
 

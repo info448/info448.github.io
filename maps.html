@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2017-12-05">
+<meta name="date" content="2018-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -136,6 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#toast"><i class="fa fa-check"></i>Toast</a></li>
 </ul></li>
 <li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#adding-interaction"><i class="fa fa-check"></i><b>1.5</b> Adding Interaction</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#kotlin-setup"><i class="fa fa-check"></i><b>1.6</b> Kotlin</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html"><i class="fa fa-check"></i><b>2</b> Resources and Layouts</a><ul>
 <li class="chapter" data-level="2.1" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html#resources"><i class="fa fa-check"></i><b>2.1</b> Resources</a><ul>
@@ -317,7 +318,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="19" data-path="maps.html"><a href="maps.html"><i class="fa fa-check"></i><b>19</b> Maps</a><ul>
 <li class="chapter" data-level="19.1" data-path="maps.html"><a href="maps.html#create-a-map-activity"><i class="fa fa-check"></i><b>19.1</b> Create a Map Activity</a><ul>
 <li class="chapter" data-level="" data-path="maps.html"><a href="maps.html#getting-an-api-key"><i class="fa fa-check"></i>Getting an API Key</a></li>
-<li class="chapter" data-level="19.1.1" data-path="maps.html"><a href="maps.html#the-supportmapfragment"><i class="fa fa-check"></i><b>19.1.1</b> The <code class="unnumbered">SupportMapFragment</code></a></li>
+<li><a href="maps.html#the-supportmapfragment">The <code>SupportMapFragment</code></a></li>
 </ul></li>
 <li class="chapter" data-level="19.2" data-path="maps.html"><a href="maps.html#specifying-the-user-interface"><i class="fa fa-check"></i><b>19.2</b> Specifying the User Interface</a></li>
 <li class="chapter" data-level="19.3" data-path="maps.html"><a href="maps.html#markers-and-drawings"><i class="fa fa-check"></i><b>19.3</b> Markers and Drawings</a><ul>
@@ -395,8 +396,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>(If you already have a Google Maps API Key, you can add this package &amp; device to that key in the <a href="https://console.developers.google.com/apis/credentials">Google Developer Console</a>).</p>
 <p>After you’ve entered the key, you should be able to build and run your app, and see a displayed map!</p>
 </div>
-<div id="the-supportmapfragment" class="section level3">
-<h3><span class="header-section-number">19.1.1</span> The <code class="unnumbered">SupportMapFragment</code></h3>
+<div id="the-supportmapfragment" class="section level3 unnumbered">
+<h3>The <code>SupportMapFragment</code></h3>
 <p>Take a moment to open up the generated <code>MapsActivity</code> and its associated layout (by default <code>layouts/activity_maps.xml</code>) and <strong>read over the initial code</strong>.</p>
 <p>The layout resource contains a single <code>&lt;fragment&gt;</code> element (like we’ve defined before), in this case referring to an instance of the <a href="https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment"><code>SupportMapFragment</code></a> class. This fragment represents the interactive map. It’s just a subclass of <code>Fragment</code> (with a few extra methods), so everything we’ve learned about Fragments applies.</p>
 <ul>

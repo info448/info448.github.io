@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2017-12-05">
+<meta name="date" content="2018-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -136,6 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#toast"><i class="fa fa-check"></i>Toast</a></li>
 </ul></li>
 <li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#adding-interaction"><i class="fa fa-check"></i><b>1.5</b> Adding Interaction</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#kotlin-setup"><i class="fa fa-check"></i><b>1.6</b> Kotlin</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html"><i class="fa fa-check"></i><b>2</b> Resources and Layouts</a><ul>
 <li class="chapter" data-level="2.1" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html#resources"><i class="fa fa-check"></i><b>2.1</b> Resources</a><ul>
@@ -317,7 +318,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="19" data-path="maps.html"><a href="maps.html"><i class="fa fa-check"></i><b>19</b> Maps</a><ul>
 <li class="chapter" data-level="19.1" data-path="maps.html"><a href="maps.html#create-a-map-activity"><i class="fa fa-check"></i><b>19.1</b> Create a Map Activity</a><ul>
 <li class="chapter" data-level="" data-path="maps.html"><a href="maps.html#getting-an-api-key"><i class="fa fa-check"></i>Getting an API Key</a></li>
-<li class="chapter" data-level="19.1.1" data-path="maps.html"><a href="maps.html#the-supportmapfragment"><i class="fa fa-check"></i><b>19.1.1</b> The <code class="unnumbered">SupportMapFragment</code></a></li>
+<li><a href="maps.html#the-supportmapfragment">The <code>SupportMapFragment</code></a></li>
 </ul></li>
 <li class="chapter" data-level="19.2" data-path="maps.html"><a href="maps.html#specifying-the-user-interface"><i class="fa fa-check"></i><b>19.2</b> Specifying the User Interface</a></li>
 <li class="chapter" data-level="19.3" data-path="maps.html"><a href="maps.html#markers-and-drawings"><i class="fa fa-check"></i><b>19.3</b> Markers and Drawings</a><ul>
@@ -407,7 +408,7 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 <p>In order to use a <code>ListView</code>, we need to get the pieces in place:</p>
 <ol style="list-style-type: decimal">
 <li><p>First we specify the <strong>model</strong>: some raw data. We will start with a simple <code>String[]</code>, filling it with placeholder data:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">String[] data = <span class="kw">new</span> String[<span class="dv">99</span>];
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">String</span>[] data = <span class="kw">new</span> <span class="bu">String</span>[<span class="dv">99</span>];
 <span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">99</span>; i&gt;<span class="dv">0</span>; i--){
     data[<span class="dv">99</span>-i] = i+ <span class="st">&quot; bottles of beer on the wall&quot;</span>;
 }</code></pre></div>
@@ -424,13 +425,13 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 </ol>
 <p>To finish the controller <code>ListView</code>, we ned to provide it with an <a href="https://developer.android.com/guide/topics/ui/declaring-layout.html#AdapterViews"><code>Adapter</code></a><a href="#fn13" class="footnoteRef" id="fnref13"><sup>13</sup></a> which will connect the <em>model</em> to the <em>view</em>. The Adapter does the “translation” work between model and view, performing a mapping from data types (e.g., a <code>String</code>) and View types (e.g., a <code>TextView</code>).</p>
 <p>Specifically, we will use an <a href="https://developer.android.com/reference/android/widget/ArrayAdapter.html"><code>ArrayAdapter</code></a>, which is one of the simplest Adapters to use (and because we have an array of data!) An <code>ArrayAdapter</code> creates Views by calling <code>.toString()</code> on each item in the array, and setting that <code>String</code> as the content of a <code>TextView</code>!</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ArrayAdapter&lt;String&gt; adapter = <span class="kw">new</span> ArrayAdapter&lt;String&gt;(<span class="kw">this</span>,
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ArrayAdapter&lt;<span class="bu">String</span>&gt; adapter = <span class="kw">new</span> ArrayAdapter&lt;<span class="bu">String</span>&gt;(<span class="kw">this</span>,
     R.<span class="fu">layout</span>.<span class="fu">list_item_layout</span>, R.<span class="fu">layout</span>.<span class="fu">list_item_txtView</span>, myStringArray);</code></pre></div>
 <ul>
 <li>Note the parameters of the constructor: a <code>Context</code> to access resources, the layout resource to use for each item, the <code>TextView</code> within that layout (the target of the mapping), and the data array (the source of the mapping). Also note that this instance utilizes <a href="java-review.html#generics"><em>generics</em></a>: we’re using an array of <code>Strings</code> (as opposed to an array of <code>Dogs</code> or some other type).</li>
 </ul>
 <p>We acquire a reference to the <code>ListView</code> with <code>findViewById()</code>, and call <code>ListView#setAdapter()</code> to attach the adapter to that controller.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ListView listView = (ListView)<span class="fu">findViewById</span>(R.<span class="fu">id</span>.<span class="fu">list_view</span>);
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">ListView</span> listView = (<span class="bu">ListView</span>)<span class="fu">findViewById</span>(R.<span class="fu">id</span>.<span class="fu">list_view</span>);
 listView.<span class="fu">setAdapter</span>(adapter);</code></pre></div>
 <p>And that’s all that is needed to create a scrollable list of data! To track the process: the Adapter will go through each item in the <em>model</em>, and “translate” that item into the contents of a View. These Views will then be displayed in a scrollable list.</p>
 <p>Each item in this list is selectable (can be given an <code>onClick</code> callback). This allows us to click on any item in order to (for example) get more details about the item. Utilize the <code>AdapterView#setOnItemClickListener(OnItemClickListener)</code> function to register the callback.</p>
@@ -473,15 +474,15 @@ Volley’s main “competitor” is the <a href="http://square.github.io/retrofi
 </div>
 <p>Because the last two <em>listener</em> objects are usually defined with anonymous classes, this can make the Request constructor look more complicated than it is:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//silly example: get 20 random dinosaur names</span>
-String url = <span class="st">&quot;http://dinoipsum.herokuapp.com/api/?format=text&amp;words=20&amp;paragraphs=1&quot;</span>;
+<span class="bu">String</span> url = <span class="st">&quot;http://dinoipsum.herokuapp.com/api/?format=text&amp;words=20&amp;paragraphs=1&quot;</span>;
 
-Request myRequest = <span class="kw">new</span> <span class="fu">StringRequest</span>(Request.<span class="fu">Method</span>.<span class="fu">GET</span>, url,
-        <span class="kw">new</span> Response.<span class="fu">Listener</span>&lt;String&gt;() {
-            <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onResponse</span>(String response) {
+<span class="bu">Request</span> myRequest = <span class="kw">new</span> <span class="fu">StringRequest</span>(<span class="bu">Request</span>.<span class="fu">Method</span>.<span class="fu">GET</span>, url,
+        <span class="kw">new</span> <span class="bu">Response</span>.<span class="fu">Listener</span>&lt;<span class="bu">String</span>&gt;() {
+            <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onResponse</span>(<span class="bu">String</span> response) {
                 Log.<span class="fu">v</span>(TAG, response);
             }
-        }, <span class="kw">new</span> Response.<span class="fu">ErrorListener</span>() {
-            <span class="fu">@Override</span>
+        }, <span class="kw">new</span> <span class="bu">Response</span>.<span class="fu">ErrorListener</span>() {
+            <span class="at">@Override</span>
             <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onErrorResponse</span>(VolleyError error) {
                 Log.<span class="fu">e</span>(TAG, error.<span class="fu">toString</span>());
             }
@@ -524,13 +525,13 @@ You can use the <code>JsonObjectRequest</code> class to download data as a JSON 
     <span class="kw">private</span> RequestQueue requestQueue = <span class="kw">null</span>; <span class="co">//the singleton&#39;s RequestQueue</span>
 
     <span class="co">//private constructor; cannot instantiate directly</span>
-    <span class="kw">private</span> <span class="fu">RequestSingleton</span>(Context ctx){
+    <span class="kw">private</span> <span class="fu">RequestSingleton</span>(<span class="bu">Context</span> ctx){
         <span class="co">//create the requestQueue</span>
         <span class="kw">this</span>.<span class="fu">requestQueue</span> = Volley.<span class="fu">newRequestQueue</span>(ctx.<span class="fu">getApplicationContext</span>());
     }
 
     <span class="co">//call this &quot;factory&quot; method to access the Singleton</span>
-    <span class="kw">public</span> <span class="dt">static</span> RequestSingleton <span class="fu">getInstance</span>(Context ctx) {
+    <span class="kw">public</span> <span class="dt">static</span> RequestSingleton <span class="fu">getInstance</span>(<span class="bu">Context</span> ctx) {
         <span class="co">//only create the singleton if it doesn&#39;t exist yet</span>
         <span class="kw">if</span>(instance == <span class="kw">null</span>){
             instance = <span class="kw">new</span> <span class="fu">RequestSingleton</span>(ctx);
@@ -545,7 +546,7 @@ You can use the <code>JsonObjectRequest</code> class to download data as a JSON 
     }
 
     <span class="co">//convenience wrapper method</span>
-    <span class="kw">public</span> &lt;T&gt; <span class="dt">void</span> <span class="fu">add</span>(Request&lt;T&gt; req) {
+    <span class="kw">public</span> &lt;T&gt; <span class="dt">void</span> <span class="fu">add</span>(<span class="bu">Request</span>&lt;T&gt; req) {
         requestQueue.<span class="fu">add</span>(req);
     }
 }</code></pre></div>
@@ -566,17 +567,17 @@ The other popular image-management libraries are <a href="https://github.com/bum
 ImageLoader imageLoader = <span class="kw">new</span> <span class="fu">ImageLoader</span>(requestQueue,
         <span class="kw">new</span> ImageLoader.<span class="fu">ImageCache</span>() {  <span class="co">//define an anonymous Cache object</span>
             <span class="co">//the cache instance variable</span>
-            <span class="kw">private</span> <span class="dt">final</span> LruCache&lt;String, Bitmap&gt; cache = <span class="kw">new</span> LruCache&lt;String, Bitmap&gt;(<span class="dv">20</span>);
+            <span class="kw">private</span> <span class="dt">final</span> LruCache&lt;<span class="bu">String</span>, Bitmap&gt; cache = <span class="kw">new</span> LruCache&lt;<span class="bu">String</span>, Bitmap&gt;(<span class="dv">20</span>);
 
             <span class="co">//method for accessing the cache</span>
-            <span class="fu">@Override</span>
-            <span class="kw">public</span> Bitmap <span class="fu">getBitmap</span>(String url) {
+            <span class="at">@Override</span>
+            <span class="kw">public</span> Bitmap <span class="fu">getBitmap</span>(<span class="bu">String</span> url) {
                 <span class="kw">return</span> cache.<span class="fu">get</span>(url);
             }
 
             <span class="co">//method for storing to the cache</span>
-            <span class="fu">@Override</span>
-            <span class="kw">public</span> <span class="dt">void</span> <span class="fu">putBitmap</span>(String url, Bitmap bitmap) {
+            <span class="at">@Override</span>
+            <span class="kw">public</span> <span class="dt">void</span> <span class="fu">putBitmap</span>(<span class="bu">String</span> url, Bitmap bitmap) {
                 cache.<span class="fu">put</span>(url, bitmap);
             }
         });</code></pre></div>

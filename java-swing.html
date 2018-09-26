@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2017-12-05">
+<meta name="date" content="2018-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -136,6 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#toast"><i class="fa fa-check"></i>Toast</a></li>
 </ul></li>
 <li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#adding-interaction"><i class="fa fa-check"></i><b>1.5</b> Adding Interaction</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#kotlin-setup"><i class="fa fa-check"></i><b>1.6</b> Kotlin</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html"><i class="fa fa-check"></i><b>2</b> Resources and Layouts</a><ul>
 <li class="chapter" data-level="2.1" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html#resources"><i class="fa fa-check"></i><b>2.1</b> Resources</a><ul>
@@ -317,7 +318,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="19" data-path="maps.html"><a href="maps.html"><i class="fa fa-check"></i><b>19</b> Maps</a><ul>
 <li class="chapter" data-level="19.1" data-path="maps.html"><a href="maps.html#create-a-map-activity"><i class="fa fa-check"></i><b>19.1</b> Create a Map Activity</a><ul>
 <li class="chapter" data-level="" data-path="maps.html"><a href="maps.html#getting-an-api-key"><i class="fa fa-check"></i>Getting an API Key</a></li>
-<li class="chapter" data-level="19.1.1" data-path="maps.html"><a href="maps.html#the-supportmapfragment"><i class="fa fa-check"></i><b>19.1.1</b> The <code class="unnumbered">SupportMapFragment</code></a></li>
+<li><a href="maps.html#the-supportmapfragment">The <code>SupportMapFragment</code></a></li>
 </ul></li>
 <li class="chapter" data-level="19.2" data-path="maps.html"><a href="maps.html#specifying-the-user-interface"><i class="fa fa-check"></i><b>19.2</b> Specifying the User Interface</a></li>
 <li class="chapter" data-level="19.3" data-path="maps.html"><a href="maps.html#markers-and-drawings"><i class="fa fa-check"></i><b>19.3</b> Markers and Drawings</a><ul>
@@ -417,9 +418,9 @@ This appendix references code found at <a href="https://github.com/info448/appen
 <li>This could be a <code>static</code> nested class, but then it wouldn’t be able to access instance variables (because it belongs to the <em>class</em>, not the <em>object</em>). So you might want to make it an inner class instead. Of course then you can’t re-use it elsewhere without making the <code>MyGUI</code> (whose instance variables it referenes anyway)… but at least we’ve organized the functionality.</li>
 </ul></li>
 <li><p>It seems sort of silly to create a whole new <code>MyActionListener</code> class that has one method and is just going to be instantiated once. So what if instead of giving it a name, we just made it an <a href="https://docs.oracle.com/javase/tutorial/java/javaOO/anonymousclasses.html"><strong>anonymous class</strong></a>? This is similar to how you’ve made <em>anonymous variables</em> by instantiating objects without assigning them to named variables, you’re just doing the same thing with a class that just implements an interface. The syntax looks like:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">button.<span class="fu">addActionListener</span>(<span class="kw">new</span> ActionListener() {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">button.<span class="fu">addActionListener</span>(<span class="kw">new</span> <span class="bu">ActionListener</span>() {
     <span class="co">//class definition (including methods to override) goes in here!</span>
-      <span class="kw">public</span> <span class="dt">void</span> <span class="fu">actionPerformed</span>(ActionEvent event) {
+      <span class="kw">public</span> <span class="dt">void</span> <span class="fu">actionPerformed</span>(<span class="bu">ActionEvent</span> event) {
             <span class="co">//...</span>
       }
 });</code></pre></div>
@@ -430,7 +431,7 @@ This appendix references code found at <a href="https://github.com/info448/appen
 <h2><span class="header-section-number">B.2</span> Layouts and Composites</h2>
 <p>What if we want to add a second button? If we try to just <code>.add()</code> another button… it replaces the one we previously had! This is because Java doesn’t know <em>where</em> to put the second button. Below? Above? Left? Right?</p>
 <p>In order to have the <code>JFrame</code> contain multiple components, we need to specify a <a href="https://docs.oracle.com/javase/8/docs/api/java/awt/LayoutManager.html"><strong>layout</strong></a>, which knows how to organize items that are added to the Frame. We do this with the <code>.setLayout()</code> method. For example, we can give the frame a <code>BoxLayout()</code> with a <code>PAGE_AXIS</code> orientation to have it lay out the buttons in a vertical row.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">container.<span class="fu">setLayout</span>(<span class="kw">new</span> BoxLayout(container, BoxLayout.<span class="fu">PAGE_AXIS</span>));
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">container.<span class="fu">setLayout</span>(<span class="kw">new</span> <span class="bu">BoxLayout</span>(container, <span class="bu">BoxLayout</span>.<span class="fu">PAGE_AXIS</span>));
 container.<span class="fu">add</span>(theButton);
 container.<span class="fu">add</span>(otherButton);</code></pre></div>
 <ul>

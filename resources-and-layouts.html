@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2017-12-05">
+<meta name="date" content="2018-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -136,6 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#toast"><i class="fa fa-check"></i>Toast</a></li>
 </ul></li>
 <li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#adding-interaction"><i class="fa fa-check"></i><b>1.5</b> Adding Interaction</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#kotlin-setup"><i class="fa fa-check"></i><b>1.6</b> Kotlin</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html"><i class="fa fa-check"></i><b>2</b> Resources and Layouts</a><ul>
 <li class="chapter" data-level="2.1" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html#resources"><i class="fa fa-check"></i><b>2.1</b> Resources</a><ul>
@@ -317,7 +318,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="19" data-path="maps.html"><a href="maps.html"><i class="fa fa-check"></i><b>19</b> Maps</a><ul>
 <li class="chapter" data-level="19.1" data-path="maps.html"><a href="maps.html#create-a-map-activity"><i class="fa fa-check"></i><b>19.1</b> Create a Map Activity</a><ul>
 <li class="chapter" data-level="" data-path="maps.html"><a href="maps.html#getting-an-api-key"><i class="fa fa-check"></i>Getting an API Key</a></li>
-<li class="chapter" data-level="19.1.1" data-path="maps.html"><a href="maps.html#the-supportmapfragment"><i class="fa fa-check"></i><b>19.1.1</b> The <code class="unnumbered">SupportMapFragment</code></a></li>
+<li><a href="maps.html#the-supportmapfragment">The <code>SupportMapFragment</code></a></li>
 </ul></li>
 <li class="chapter" data-level="19.2" data-path="maps.html"><a href="maps.html#specifying-the-user-interface"><i class="fa fa-check"></i><b>19.2</b> Specifying the User Interface</a></li>
 <li class="chapter" data-level="19.3" data-path="maps.html"><a href="maps.html#markers-and-drawings"><i class="fa fa-check"></i><b>19.3</b> Markers and Drawings</a><ul>
@@ -421,13 +422,13 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 <div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;string</span><span class="ot"> name=</span><span class="st">&quot;app_name&quot;</span><span class="kw">&gt;</span>Layout Demo<span class="kw">&lt;/string&gt;</span>
 <span class="kw">&lt;string</span><span class="ot"> name=</span><span class="st">&quot;greeting&quot;</span><span class="kw">&gt;</span>Hello Android!<span class="kw">&lt;/string&gt;</span></code></pre></div>
 <p>will in effect be compiled into constants similar to:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> String app_name = <span class="st">&quot;My Application&quot;</span>;
-<span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> String greeting = <span class="st">&quot;Hello Android!&quot;</span>;</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">String</span> app_name = <span class="st">&quot;My Application&quot;</span>;
+<span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">String</span> greeting = <span class="st">&quot;Hello Android!&quot;</span>;</code></pre></div>
 <p>All of the resource constants are compiled into <em>inner classes</em> inside <code>R</code>, one for each resource type. So an <code>R</code> file containing the above strings would be structured like:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> R {
     <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> string {
-        <span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> String app_name = <span class="st">&quot;My Application&quot;</span>;
-        <span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> String greeting = <span class="st">&quot;Hello Android!&quot;</span>;
+        <span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">String</span> app_name = <span class="st">&quot;My Application&quot;</span>;
+        <span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">String</span> greeting = <span class="st">&quot;Hello Android!&quot;</span>;
     }
 }</code></pre></div>
 <p>This allows you to use <strong>dot notation</strong> to refer to each resource based on its type (e.g., <code>R.string.greeting</code>)—similar to the syntax used to refer to nested JSON objects!</p>
@@ -445,8 +446,8 @@ You can find the generated <code>R.java</code> file inside <code>app/build/gener
 <li><p>You can think of each <code>int</code> constant as a “key” or “index” for that resource (in the list of all resources). Android does the hard work of taking that <code>int</code>, looking it up in an internal resource table, finding the associated XML file, and then getting the right element out of that XML. (By hard work, I mean in terms of implementation. Android is looking up these references directly in memory, so the look-up is fast).</p></li>
 </ul>
 <p>Because the <code>R</code> class is included in the Java, we can access these <code>int</code> constants directly in our code (as <code>R.resource_type.identifier</code>), as in the <code>setContentView()</code> method. However, if you want to actually get the String value, you can look that up by using the application’s <code>Resources()</code> object:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">Resources res = <span class="kw">this</span>.<span class="fu">getResources</span>(); <span class="co">//get access to application&#39;s resources</span>
-String myString = res.<span class="fu">getString</span>(R.<span class="fu">string</span>.<span class="fu">myString</span>); <span class="co">//look up value of that resource</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">Resources</span> res = <span class="kw">this</span>.<span class="fu">getResources</span>(); <span class="co">//get access to application&#39;s resources</span>
+<span class="bu">String</span> myString = res.<span class="fu">getString</span>(R.<span class="fu">string</span>.<span class="fu">myString</span>); <span class="co">//look up value of that resource</span></code></pre></div>
 <ul>
 <li>The other comment method that utilizes resources will be <code>findViewById(int)</code>, which is used to reference a <code>View</code> element (e.g., a button) specified in a layout resource in order to call methods on it in Java, as in the example from the previous lecture.</li>
 </ul>
@@ -551,7 +552,7 @@ Android studio does come with a graphical <a href="https://developer.android.com
 <h3>Practice</h3>
 <p>Add a new <a href="http://developer.android.com/reference/android/widget/ImageView.html"><code>ImageView</code></a> element that contains a picture. Be sure and specify its <code>id</code> and size (experiment with different options).</p>
 <p>You should specify the content of the image in the XML resource using the <code>android:src</code> attribute (use <code>@</code> to reference a <code>drawable</code>), but you can specify the content dynamically in Java code if you want to change it later.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ImageView imageView = (ImageView)<span class="fu">findViewById</span>(R.<span class="fu">id</span>.<span class="fu">img_view</span>);
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">ImageView</span> imageView = (<span class="bu">ImageView</span>)<span class="fu">findViewById</span>(R.<span class="fu">id</span>.<span class="fu">img_view</span>);
 imageView.<span class="fu">setImageResource</span>(R.<span class="fu">drawable</span>.<span class="fu">my_image</span>);</code></pre></div>
 </div>
 </div>
@@ -612,7 +613,7 @@ imageView.<span class="fu">setImageResource</span>(R.<span class="fu">drawable</
 <div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;include</span><span class="ot"> layout=</span><span class="st">&quot;@layout/sub_layout&quot;</span><span class="kw">&gt;</span></code></pre></div>
 <p>But it is also possible to dynamically load views “manually” (e.g., in Java code) using the <a href="https://developer.android.com/reference/android/view/LayoutInflater.html"><code>LayoutInflator</code></a>. This is a class that has the job of “inflating” (rendering) Views. LayoutInflator is implicitly used in the <code>setContentView()</code> method, but can also be used independently with the following syntax:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">LayoutInflator inflator = <span class="fu">getLayoutInflator</span>(); <span class="co">//access the inflator (called on the Activity)</span>
-View myLayout = inflator.<span class="fu">inflate</span>(R.<span class="fu">layout</span>.<span class="fu">my_layout</span>, parentViewGroup, <span class="kw">true</span>); <span class="co">//to attach</span></code></pre></div>
+<span class="bu">View</span> myLayout = inflator.<span class="fu">inflate</span>(R.<span class="fu">layout</span>.<span class="fu">my_layout</span>, parentViewGroup, <span class="kw">true</span>); <span class="co">//to attach</span></code></pre></div>
 <p>Note that we never instantiate the <code>LayoutInflator</code>, we just access an object that is defined as part of the Activity.</p>
 <p>The <a href="http://developer.android.com/reference/android/view/LayoutInflater.html#inflate(int, android.view.ViewGroup, boolean)"><code>inflate()</code></a> method takes a couple of arguments:</p>
 <ul>
@@ -630,7 +631,7 @@ View myLayout = inflator.<span class="fu">inflate</span>(R.<span class="fu">layo
 <span class="ot">    android:layout_height=</span><span class="st">&quot;wrap_content&quot;</span> <span class="kw">/&gt;</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//Java</span>
 ViewStub stub = (ViewStub)<span class="fu">findViewById</span>(R.<span class="fu">id</span>.<span class="fu">stub</span>);
-View inflated = stub.<span class="fu">inflate</span>();</code></pre></div>
+<span class="bu">View</span> inflated = stub.<span class="fu">inflate</span>();</code></pre></div>
 <p>There are many other options for displaying or changing View content. Just remember to define as much of the View as possible in the XML, so that the Java code is kept simple and separate.</p>
 </div>
 </div>
@@ -663,7 +664,7 @@ View inflated = stub.<span class="fu">inflate</span>();</code></pre></div>
 <span class="ot">    android:layout_height=</span><span class="st">&quot;wrap_content&quot;</span>
 <span class="ot">    android:onClick=</span><span class="st">&quot;handleButtonClick&quot;</span> <span class="kw">/&gt;</span></code></pre></div>
 <p>The callback method is declared in the Java code as taking in a <code>View</code> parameter (which will be a reference to whatever View caused the event to occur) and returning <code>void</code>:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">handleButtonClick</span>(View view) { }</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">handleButtonClick</span>(<span class="bu">View</span> view) { }</code></pre></div>
 <p>We will utilize a mix of both of these strategies (defining callbacks in both the Java and the XML) in this class.</p>
 <p class="alert">
 <em>Author’s Opinion</em>: It is arguable about which approach is “better”. Specifying the callback method in the Java code helps keep the appearance and behavior separate, and avoids introducing hidden dependencies for resources (the Activity must provide the required callback). However, as buttons are made to be pressed, it isn’t unreasonable to give a “name” in the XML resource as to what the button will do, especially as the corresponding Java method may just be a “launcher” method that calls something else. Specifying the callback in the XML resource may often seem faster and easier, and we will use whichever option best supports clarity in our code.

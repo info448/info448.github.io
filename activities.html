@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2017-12-05">
+<meta name="date" content="2018-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -136,6 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#toast"><i class="fa fa-check"></i>Toast</a></li>
 </ul></li>
 <li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#adding-interaction"><i class="fa fa-check"></i><b>1.5</b> Adding Interaction</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#kotlin-setup"><i class="fa fa-check"></i><b>1.6</b> Kotlin</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html"><i class="fa fa-check"></i><b>2</b> Resources and Layouts</a><ul>
 <li class="chapter" data-level="2.1" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html#resources"><i class="fa fa-check"></i><b>2.1</b> Resources</a><ul>
@@ -317,7 +318,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="19" data-path="maps.html"><a href="maps.html"><i class="fa fa-check"></i><b>19</b> Maps</a><ul>
 <li class="chapter" data-level="19.1" data-path="maps.html"><a href="maps.html#create-a-map-activity"><i class="fa fa-check"></i><b>19.1</b> Create a Map Activity</a><ul>
 <li class="chapter" data-level="" data-path="maps.html"><a href="maps.html#getting-an-api-key"><i class="fa fa-check"></i>Getting an API Key</a></li>
-<li class="chapter" data-level="19.1.1" data-path="maps.html"><a href="maps.html#the-supportmapfragment"><i class="fa fa-check"></i><b>19.1.1</b> The <code class="unnumbered">SupportMapFragment</code></a></li>
+<li><a href="maps.html#the-supportmapfragment">The <code>SupportMapFragment</code></a></li>
 </ul></li>
 <li class="chapter" data-level="19.2" data-path="maps.html"><a href="maps.html#specifying-the-user-interface"><i class="fa fa-check"></i><b>19.2</b> Specifying the User Interface</a></li>
 <li class="chapter" data-level="19.3" data-path="maps.html"><a href="maps.html#markers-and-drawings"><i class="fa fa-check"></i><b>19.3</b> Markers and Drawings</a><ul>
@@ -454,9 +455,9 @@ Thus in practice, you should implement Activities as if they could be destroyed 
 <p>For example, the <code>Bundle</code> can store state information for View elements, such as what text a user has typed into an <code>EditText</code>. That way when the user rotates their phone, they won’t lose the form input they’ve entered! If a View has been given an <code>android:id</code> attribute, then that id is used to <em>automatically</em> save the state of that View, with no further effort needed on your own. So you should always give input Views ids!</p>
 <p>You can also add your own custom information to the <code>Bundle</code> by overriding the Activity’s <code>onSaveInstanceState()</code> callback (use the one for <code>AppCompactActivity</code> that only takes one parameter). It takes as a parameter the <code>Bundle</code> that is being constructed with the saved data: you can add more information to this Bundle using an appropriate <code>put()</code> method (similar to the method used for Maps, but type-sensitive):</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//declare map key as a constant</span>
-<span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> String MSG_KEY = <span class="st">&quot;message_key&quot;</span>;
+<span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">String</span> MSG_KEY = <span class="st">&quot;message_key&quot;</span>;
 
-<span class="fu">@Override</span>
+<span class="at">@Override</span>
 <span class="kw">protected</span> <span class="dt">void</span> <span class="fu">onSaveInstanceState</span>(Bundle outState) {
     <span class="co">//put value &quot;Hello World&quot; in bundle with specified key</span>
     outState.<span class="fu">putString</span>(MSG_KEY, <span class="st">&quot;Hello World&quot;</span>);
@@ -471,7 +472,7 @@ Thus in practice, you should implement Activities as if they could be destroyed 
     <span class="kw">super</span>.<span class="fu">onCreate</span>(savedInstanceState);
 
     <span class="kw">if</span>(savedInstanceState != <span class="kw">null</span>){ <span class="co">//Activity has been recreated</span>
-        String msg = savedInstanceState.<span class="fu">getString</span>(MSG_KEY);
+        <span class="bu">String</span> msg = savedInstanceState.<span class="fu">getString</span>(MSG_KEY);
     }
     <span class="kw">else</span> { <span class="co">//Activity created for first time</span>
 

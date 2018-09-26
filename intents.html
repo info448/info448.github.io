@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2017-12-05">
+<meta name="date" content="2018-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -136,6 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#toast"><i class="fa fa-check"></i>Toast</a></li>
 </ul></li>
 <li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#adding-interaction"><i class="fa fa-check"></i><b>1.5</b> Adding Interaction</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#kotlin-setup"><i class="fa fa-check"></i><b>1.6</b> Kotlin</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html"><i class="fa fa-check"></i><b>2</b> Resources and Layouts</a><ul>
 <li class="chapter" data-level="2.1" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html#resources"><i class="fa fa-check"></i><b>2.1</b> Resources</a><ul>
@@ -317,7 +318,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="19" data-path="maps.html"><a href="maps.html"><i class="fa fa-check"></i><b>19</b> Maps</a><ul>
 <li class="chapter" data-level="19.1" data-path="maps.html"><a href="maps.html#create-a-map-activity"><i class="fa fa-check"></i><b>19.1</b> Create a Map Activity</a><ul>
 <li class="chapter" data-level="" data-path="maps.html"><a href="maps.html#getting-an-api-key"><i class="fa fa-check"></i>Getting an API Key</a></li>
-<li class="chapter" data-level="19.1.1" data-path="maps.html"><a href="maps.html#the-supportmapfragment"><i class="fa fa-check"></i><b>19.1.1</b> The <code class="unnumbered">SupportMapFragment</code></a></li>
+<li><a href="maps.html#the-supportmapfragment">The <code>SupportMapFragment</code></a></li>
 </ul></li>
 <li class="chapter" data-level="19.2" data-path="maps.html"><a href="maps.html#specifying-the-user-interface"><i class="fa fa-check"></i><b>19.2</b> Specifying the User Interface</a></li>
 <li class="chapter" data-level="19.3" data-path="maps.html"><a href="maps.html#markers-and-drawings"><i class="fa fa-check"></i><b>19.3</b> Markers and Drawings</a><ul>
@@ -412,7 +413,7 @@ Intent intent = <span class="kw">new</span> <span class="fu">Intent</span>(MainA
 <p>We can then get the extras from the Intent in the Activity that receives it:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//in onCreate()</span>
 Bundle extras = <span class="fu">getIntent</span>().<span class="fu">getExtras</span>(); <span class="co">//All activities are started with an Intent!</span>
-String value = extras.<span class="fu">getString</span>(<span class="st">&quot;key&quot;</span>);</code></pre></div>
+<span class="bu">String</span> value = extras.<span class="fu">getString</span>(<span class="st">&quot;key&quot;</span>);</code></pre></div>
 <p>So we can have Activities communicate, and even share information between them! Yay!</p>
 </div>
 </div>
@@ -469,12 +470,12 @@ intent.<span class="fu">setData</span>(Uri.<span class="fu">parse</span>(<span c
 <li><p>Note that we could pass an Extra for where we want to save the large picture file to. However, we’re going to leave that off and just work with the thumbnail for this demonstration. See the <a href="http://developer.android.com/training/camera/photobasics.html#TaskPath">guide</a><a href="#fn23" class="footnoteRef" id="fnref23"><sup>23</sup></a> for details; if time we can walk through it!</p></li>
 </ul>
 <p>In order to handle the “response” Intent, we need to provide a callback that will get executed when that Intent arrives. This callback is called <code>onActivityResult()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="fu">@Override</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="at">@Override</span>
 <span class="kw">protected</span> <span class="dt">void</span> <span class="fu">onActivityResult</span>(<span class="dt">int</span> requestCode, <span class="dt">int</span> resultCode, Intent data) {
     <span class="kw">if</span> (requestCode == REQUEST_IMAGE_CAPTURE &amp;&amp; resultCode == RESULT_OK) {
         Bundle extras = data.<span class="fu">getExtras</span>();
         Bitmap imageBitmap = (Bitmap) extras.<span class="fu">get</span>(<span class="st">&quot;data&quot;</span>);
-        ImageView imageView = (ImageView) <span class="fu">findViewById</span>(R.<span class="fu">id</span>.<span class="fu">img_thumbnail</span>);
+        <span class="bu">ImageView</span> imageView = (<span class="bu">ImageView</span>) <span class="fu">findViewById</span>(R.<span class="fu">id</span>.<span class="fu">img_thumbnail</span>);
         imageView.<span class="fu">setImageBitmap</span>(imageBitmap);
     }
 }</code></pre></div>
@@ -521,7 +522,7 @@ intent.<span class="fu">setData</span>(Uri.<span class="fu">parse</span>(<span c
 </ul>
 <p>Indeed, more common than sending broadcasts will be <em>receiving</em> broadcasts; that is, we want to listen and respond to System broadcasts that are produced (things like power events, wifi status, etc). This would also include listening for things like incoming phone calls or text messages!</p>
 <p>We can receive broadcasts by using a <a href="http://developer.android.com/reference/android/content/BroadcastReceiver.html"><code>BroadcastReceiver</code></a>. This is a base class that is used by any class that can receive broadcast Intents. We <strong>subclass</strong> it and implement the <code>onReceive(Context, Intent)</code> callback in order to handle when broadcasts are received.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">onReceive</span>(Context context, Intent intent)
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">onReceive</span>(<span class="bu">Context</span> context, Intent intent)
 {
     Log.<span class="fu">v</span>(<span class="st">&quot;TAG&quot;</span>, <span class="st">&quot;received! &quot;</span>+intent.<span class="fu">toString</span>());
     <span class="kw">else</span> <span class="kw">if</span>(intent.<span class="fu">getAction</span>() == Intent.<span class="fu">ACTION_BATTERY_LOW</span>){
@@ -581,7 +582,7 @@ You can use one of the many icons built into the Android, referenced as <code>&q
 <p>See the <a href="https://developer.android.com/guide/topics/resources/menu-resource.html">Menu resources guide</a><a href="#fn26" class="footnoteRef" id="fnref26"><sup>26</sup></a> for the full list of options!</p>
 <p>It is possible to include <strong>one level</strong> of sub-menus (a <code>&lt;menu&gt;</code> element inside an <code>&lt;item&gt;</code> element). Menu items can also be grouped together by placing them inside of a <code>&lt;group&gt;</code> element. All items in a group will be shown or hidden together, and can be further ordered within that group. Grouped icons can also be made <a href="https://developer.android.com/guide/topics/ui/menus.html#checkable">checkable</a>.</p>
 <p>In order to show the menu in the running application, we need to tell the Action Bar which menu resource it should use (there may be a lot of resources). To do this, we override the <code>onCreateOptionsMenu()</code> callback in the Activity or Fragment, and then use the component’s <code>MenuInflater</code> object to expand the menu:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">boolean</span> <span class="fu">onCreateOptionsMenu</span>(Menu menu) {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">boolean</span> <span class="fu">onCreateOptionsMenu</span>(<span class="bu">Menu</span> menu) {
     MenuInflater inflater = <span class="fu">getMenuInflater</span>();
     inflater.<span class="fu">inflate</span>(R.<span class="fu">menu</span>.<span class="fu">main_menu</span>, menu); <span class="co">//inflate into this menu</span>
     <span class="kw">return</span> <span class="kw">true</span>;
@@ -590,7 +591,7 @@ You can use one of the many icons built into the Android, referenced as <code>&q
 <li>This procedure is similar in concept to how a Fragment’s <code>onViewCreated()</code> method would inflate the Fragment into the Activity. In this case, the Menu is being inflated into the Action Bar.</li>
 </ul>
 <p>We can respond to the menu items being selected by overriding the <code>onOptionsItemSelected()</code> callback. By convention, we use a <code>switch</code> on the <code>item.getItemId()</code> to determine what item was selected, and then act accordingly.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">boolean</span> <span class="fu">onOptionsItemSelected</span>(MenuItem item) {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">boolean</span> <span class="fu">onOptionsItemSelected</span>(<span class="bu">MenuItem</span> item) {
     <span class="kw">switch</span>(item.<span class="fu">getItemId</span>()){
         <span class="kw">case</span> R.<span class="fu">id</span>.<span class="fu">menu_item1</span> :
             <span class="co">//do thing;</span>
@@ -619,7 +620,7 @@ You can use one of the many icons built into the Android, referenced as <code>&q
 <span class="ot">    app:actionProviderClass=</span><span class="st">&quot;android.support.v7.widget.ShareActionProvider&quot;</span>
     <span class="kw">/&gt;</span></code></pre></div>
 <p>We’ll then add the item to our menu in <code>onCreateOptionsMenu()</code></p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">MenuItem item = menu.<span class="fu">findItem</span>(R.<span class="fu">id</span>.<span class="fu">menu_item_share</span>);
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">MenuItem</span> item = menu.<span class="fu">findItem</span>(R.<span class="fu">id</span>.<span class="fu">menu_item_share</span>);
 ShareActionProvider shareProvider = (ShareActionProvider)MenuItemCompat.<span class="fu">getActionProvider</span>(item);
 
 Intent intent = <span class="kw">new</span> <span class="fu">Intent</span>(Intent.<span class="fu">ACTION_DIAL</span>);
@@ -676,7 +677,7 @@ smsManager.<span class="fu">sendTextMessage</span>(<span class="st">&quot;5554&q
 <li><p>So the idea is we specify what <code>Intent</code> should be delivered when the message is finished being sent (that <code>Intent</code> becomes “pending”). Effectively, this let’s us send Intents in response to some other kind of event.</p></li>
 </ul>
 <p>Let’s go ahead and set one up:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> String ACTION_SMS_STATUS = <span class="st">&quot;edu.uw.intentdemo.ACTION_SMS_STATUS&quot;</span>;
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">String</span> ACTION_SMS_STATUS = <span class="st">&quot;edu.uw.intentdemo.ACTION_SMS_STATUS&quot;</span>;
 
 <span class="co">//...</span>
 

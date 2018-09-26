@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2017-12-05">
+<meta name="date" content="2018-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -136,6 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#toast"><i class="fa fa-check"></i>Toast</a></li>
 </ul></li>
 <li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#adding-interaction"><i class="fa fa-check"></i><b>1.5</b> Adding Interaction</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#kotlin-setup"><i class="fa fa-check"></i><b>1.6</b> Kotlin</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html"><i class="fa fa-check"></i><b>2</b> Resources and Layouts</a><ul>
 <li class="chapter" data-level="2.1" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html#resources"><i class="fa fa-check"></i><b>2.1</b> Resources</a><ul>
@@ -317,7 +318,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="19" data-path="maps.html"><a href="maps.html"><i class="fa fa-check"></i><b>19</b> Maps</a><ul>
 <li class="chapter" data-level="19.1" data-path="maps.html"><a href="maps.html#create-a-map-activity"><i class="fa fa-check"></i><b>19.1</b> Create a Map Activity</a><ul>
 <li class="chapter" data-level="" data-path="maps.html"><a href="maps.html#getting-an-api-key"><i class="fa fa-check"></i>Getting an API Key</a></li>
-<li class="chapter" data-level="19.1.1" data-path="maps.html"><a href="maps.html#the-supportmapfragment"><i class="fa fa-check"></i><b>19.1.1</b> The <code class="unnumbered">SupportMapFragment</code></a></li>
+<li><a href="maps.html#the-supportmapfragment">The <code>SupportMapFragment</code></a></li>
 </ul></li>
 <li class="chapter" data-level="19.2" data-path="maps.html"><a href="maps.html#specifying-the-user-interface"><i class="fa fa-check"></i><b>19.2</b> Specifying the User Interface</a></li>
 <li class="chapter" data-level="19.3" data-path="maps.html"><a href="maps.html#markers-and-drawings"><i class="fa fa-check"></i><b>19.3</b> Markers and Drawings</a><ul>
@@ -432,7 +433,7 @@ Fragments are intended to be <strong>modular</strong>, <strong>reusable</strong>
 <p>Defining the Fragment in the XML works (and will be fine to start with), but in practice it is <em>much</em> more common and worthwhile to instantiate the Fragments <strong>dynamically</strong> at runtime in the Java code—thereby allowing the Fragments to be dynamically determined and changed. We will start with the XML version to built the Fragment, and then shift to the Java version.</p>
 <p>We can next begin filling in the Java logic for the Fragment. Android Studio provides a little starter code: a constructor and the <code>onCreateView()</code> callback—the later is more relevant since we will use that to set up the layout (similar to in the <code>onCreate()</code> function of <code>MainActivity</code>). But the <code>MainActivity#onCreate()</code> method specifies a layout by calling <code>setContentView()</code> and passing a resource id. With Fragments, we can’t just “set” the View because the Fragment <em>belongs to</em> an Activity, and so will exist <em>inside</em> its View hierarchy! Instead, we need to figure out which ViewGroup the Fragment is inside of, and then <strong>inflate</strong> the Fragment’s View inside that ViewGroup.</p>
 <p>This “inflated” View is referred to as the <strong><em>root view</em></strong>: it is the “root” of the Fragment’s View tree (the View that all the Views inside the Fragment’s layout will be attached to). We access the root view by <em>inflating</em> the fragment’s layout, and saving a reference to the inflated View:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">View rootView = inflater.<span class="fu">inflate</span>(R.<span class="fu">layout</span>.<span class="fu">fragment_layout</span>, container, <span class="kw">false</span>);</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">View</span> rootView = inflater.<span class="fu">inflate</span>(R.<span class="fu">layout</span>.<span class="fu">fragment_layout</span>, container, <span class="kw">false</span>);</code></pre></div>
 <ul>
 <li>Note that the <code>inflater</code> object we are calling <code>inflate()</code> on was passed as a parameter to the <code>onCreateView()</code> callback. The parameters to the <code>inflate()</code> method are: the layout to inflate, the <code>ViewGroup</code> (<code>container</code>) into which the layout should be inflated (also passed as a parameter to the callback), and whether or not to “attach” the inflated layout to the container (<code>false</code> in this case because the Fragment system already handles the attachment, so the inflate method doesn’t need to). The <code>onCreateView()</code> callback must <code>return</code> the inflated <em>root view</em>, so that the system can perform this attachment.</li>
 </ul>
@@ -476,7 +477,7 @@ fragment.<span class="fu">searchMovies</span>(searchTerm)</code></pre></div>
 <p>To do this, we will need to instantiate the desired Fragment <strong>dynamically</strong> (in Java code), rather than statically in the XML using the <code>&lt;fragment&gt;</code> element. This is because we need to be able to dynamically change <em>which</em> Fragment is currently being shown, which is not possibly for Fragments that are “hard-coded” in the XML.</p>
 <p>Unlike Activities, Fragments (such as <code>MovieListFragment</code>) <strong>do</strong> have constructor methods that can be called. In fact, Android <em>requires</em> that every Fragment include a default (no-argument) constructor that is called when Fragments are created by the system! While we are have access to the constructor, it is considered best practice to <strong>not</strong> call this constructor directly when you want to instantiate a Fragment, and to in fact leave the method empty. This is because we do not have full control over when the constructor is executed: the Android system may call the no-argument constructor whenever it needs to recreate the Activity (or just the Fragment), which can happen at arbitrary times. Since only this default constructor is called, we can’t add an additional constructor with any arguments we may want the Fragment to have (e.g., the <code>searchTerm</code>)… and thus it’s best to not use it at all.</p>
 <p>Instead, we specify a <strong>simple factory</strong> method (by convention called <code>newInstance()</code>) which is able to “create” an instance of the Fragment for us. This factory method can take as many arguments as we want, and then does the work of passing these arguments into the Fragment instantiated with the default constructor:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">static</span> MyFragment <span class="fu">newInstance</span>(String argument) {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">static</span> MyFragment <span class="fu">newInstance</span>(<span class="bu">String</span> argument) {
     MyFragment fragment = <span class="kw">new</span> <span class="fu">MyFragment</span>(); <span class="co">//instantiate the Fragment</span>
     Bundle args = <span class="kw">new</span> <span class="fu">Bundle</span>(); <span class="co">//an (empty) Bundle for the arguments</span>
     args.<span class="fu">putString</span>(ARG_PARAM_KEY, argument); <span class="co">//add the argument to the Bundle</span>
@@ -524,13 +525,13 @@ Using <code>getActivity()</code> to reference the Activity and <code>getSupportF
 <ul>
 <li><p>Create a new <code>interface</code> inside the Fragment (e.g., <code>OnMovieSelectedListener</code>). This interface needs a public method (e.g., <code>onMovieSelected(Movie movie)</code>) that the Fragment can call to give instructions or messages to the Activity.</p></li>
 <li><p>In the Fragment’s <code>onAttach()</code> callback (called when the Fragment is first associated with an Activity), we can check that the Activity actually implements the interface by trying to <em>cast</em> it to that interface. We can also save a reference to this Activity for later, to save some time:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">onAttach</span>(Context context) {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">onAttach</span>(<span class="bu">Context</span> context) {
     <span class="kw">super</span>.<span class="fu">onAttach</span>(context);
 
     <span class="kw">try</span> {
         callback = (OnMovieSelectedListener)context; <span class="co">//attempt to cast</span>
-    } <span class="kw">catch</span> (ClassCastException e) {
-        <span class="kw">throw</span> <span class="kw">new</span> ClassCastException(context.<span class="fu">toString</span>() + <span class="st">&quot; must implement OnMovieSelectedListener&quot;</span>);
+    } <span class="kw">catch</span> (<span class="bu">ClassCastException</span> e) {
+        <span class="kw">throw</span> <span class="kw">new</span> <span class="bu">ClassCastException</span>(context.<span class="fu">toString</span>() + <span class="st">&quot; must implement OnMovieSelectedListener&quot;</span>);
     }
 }</code></pre></div></li>
 <li><p>Then when an action occurs in the Fragment (e.g., a movie is selected), you call the interface’s method on the <code>callback</code> reference.</p></li>
@@ -610,7 +611,7 @@ An important part of learning to develop Android applications is being able to r
         <span class="kw">return</span> fragment;
     }
 
-    <span class="kw">public</span> Dialog <span class="fu">onCreateDialog</span>(Bundle savedInstanceState) {
+    <span class="kw">public</span> <span class="bu">Dialog</span> <span class="fu">onCreateDialog</span>(Bundle savedInstanceState) {
         AlertDialog.<span class="fu">Builder</span> builder = <span class="kw">new</span> AlertDialog.<span class="fu">Builder</span>(<span class="fu">getActivity</span>());
         <span class="co">//...</span>
         AlertDialog dialog = builder.<span class="fu">create</span>();

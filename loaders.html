@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2017-12-05">
+<meta name="date" content="2018-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -136,6 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#toast"><i class="fa fa-check"></i>Toast</a></li>
 </ul></li>
 <li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#adding-interaction"><i class="fa fa-check"></i><b>1.5</b> Adding Interaction</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#kotlin-setup"><i class="fa fa-check"></i><b>1.6</b> Kotlin</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html"><i class="fa fa-check"></i><b>2</b> Resources and Layouts</a><ul>
 <li class="chapter" data-level="2.1" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html#resources"><i class="fa fa-check"></i><b>2.1</b> Resources</a><ul>
@@ -317,7 +318,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="19" data-path="maps.html"><a href="maps.html"><i class="fa fa-check"></i><b>19</b> Maps</a><ul>
 <li class="chapter" data-level="19.1" data-path="maps.html"><a href="maps.html#create-a-map-activity"><i class="fa fa-check"></i><b>19.1</b> Create a Map Activity</a><ul>
 <li class="chapter" data-level="" data-path="maps.html"><a href="maps.html#getting-an-api-key"><i class="fa fa-check"></i>Getting an API Key</a></li>
-<li class="chapter" data-level="19.1.1" data-path="maps.html"><a href="maps.html#the-supportmapfragment"><i class="fa fa-check"></i><b>19.1.1</b> The <code class="unnumbered">SupportMapFragment</code></a></li>
+<li><a href="maps.html#the-supportmapfragment">The <code>SupportMapFragment</code></a></li>
 </ul></li>
 <li class="chapter" data-level="19.2" data-path="maps.html"><a href="maps.html#specifying-the-user-interface"><i class="fa fa-check"></i><b>19.2</b> Specifying the User Interface</a></li>
 <li class="chapter" data-level="19.3" data-path="maps.html"><a href="maps.html#markers-and-drawings"><i class="fa fa-check"></i><b>19.3</b> Markers and Drawings</a><ul>
@@ -419,10 +420,10 @@ While you don’t need to know SQL to utilize a built-in database like the User 
 <li><p>Be sure to always select the <code>_ID</code> primary key: it will be needed later!</p></li>
 </ul>
 <p>The other parameters can be used to customize the <code>SELECT</code> statement. The “selection” (<code>WHERE</code>) clause needs to parameters: the second are values that will be escaped against <a href="https://en.wikipedia.org/wiki/SQL_injection">SQL injection attacks</a>. Passing <code>null</code> for any of these parameters will cause the clause to be ignored:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">String[] projection = <span class="kw">new</span> String[] {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">String</span>[] projection = <span class="kw">new</span> <span class="bu">String</span>[] {
     UserDictionary.<span class="fu">Words</span>.<span class="fu">WORD</span>,
     UserDictionary.<span class="fu">Words</span>.<span class="fu">FREQUENCY</span>,
-    UserDictionary.<span class="fu">Words</span>.<span class="fu">_ID</span>
+    UserDictionary.<span class="fu">Words</span>._ID
 };
 resolver.<span class="fu">query</span>(UserDictionary.<span class="fu">Words</span>.<span class="fu">CONTENT_URI</span>, projection, <span class="kw">null</span>, <span class="kw">null</span>, <span class="kw">null</span>);</code></pre></div>
 <p>So overall, the query is breaking apart the components SQL <code>SELECT</code> statement into different pieces as parameters to a method, so you don’t <em>quite</em> have to write the selection yourself. Moreover, this method <em>abstracts</em> the specific query language, allowing the same queries to be used on different formats of database (<code>SQLite</code>, <code>PostgreSQL</code>, files, etc).</p>
@@ -432,8 +433,8 @@ resolver.<span class="fu">query</span>(UserDictionary.<span class="fu">Words</sp
 <p>The <code>ContentResolver#query()</code> method returns a <a href="http://developer.android.com/reference/android/database/Cursor.html"><strong><code>Cursor</code></strong></a>. A <code>Cursor</code> provides an interface to the list of records in a database (e.g., those returned by the query). A <code>Cursor</code> also behaves like an <code>Iterator</code> in Java: it keeps track of which record is currently being accessed (e.g., what the <code>i</code> would be in a for loop). You can think of it as a “pointer” to a particular record, like the cursor on a screen.</p>
 <p>We call methods on the <code>Cursor</code> to specify which record we want it to “point” to, as well as to fetch values from the record object at that spot in the list. For example:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">cursor.<span class="fu">moveToFirst</span>(); <span class="co">//move to the first item</span>
-String field0 = cursor.<span class="fu">getString</span>(<span class="dv">0</span>); <span class="co">//get the first field (column you specified) as a String</span>
-String word = cursor.<span class="fu">getString</span>(cursor.<span class="fu">getColumnIndexOrThrow</span>(<span class="st">&quot;word&quot;</span>)); <span class="co">//get the &quot;word&quot; field as a String</span>
+<span class="bu">String</span> field0 = cursor.<span class="fu">getString</span>(<span class="dv">0</span>); <span class="co">//get the first field (column you specified) as a String</span>
+<span class="bu">String</span> word = cursor.<span class="fu">getString</span>(cursor.<span class="fu">getColumnIndexOrThrow</span>(<span class="st">&quot;word&quot;</span>)); <span class="co">//get the &quot;word&quot; field as a String</span>
 cursor.<span class="fu">moveToNext</span>(); <span class="co">//go to the next item</span></code></pre></div>
 <p>The nice thing about <code>Cursors</code> though is that they can easily be fed into <code>AdapterViews</code> by using a <a href="http://developer.android.com/reference/android/widget/CursorAdapter.html"><code>CursorAdapter</code></a> (as opposed to the <code>ArrayAdapter</code> we’ve used previously). The <a href="http://developer.android.com/reference/android/widget/SimpleCursorAdapter.html"><strong><code>SimpleCursorAdapter</code></strong></a> is a concrete implementation that is almost as easy to use as an <code>ArrayAdapter</code>:</p>
 <p>You instantiate a new <code>SimpleCursorAdapter</code>, passing it:</p>
@@ -449,7 +450,7 @@ cursor.<span class="fu">moveToNext</span>(); <span class="co">//go to the next i
                 <span class="kw">this</span>,
                 R.<span class="fu">layout</span>.<span class="fu">list_item_layout</span>, <span class="co">//item to inflate</span>
                 cursor, <span class="co">//cursor to show</span>
-                <span class="kw">new</span> String[] {UserDictionary.<span class="fu">Words</span>.<span class="fu">WORD</span>, UserDictionary.<span class="fu">Words</span>.<span class="fu">FREQUENCY</span>}, <span class="co">//fields to display</span>
+                <span class="kw">new</span> <span class="bu">String</span>[] {UserDictionary.<span class="fu">Words</span>.<span class="fu">WORD</span>, UserDictionary.<span class="fu">Words</span>.<span class="fu">FREQUENCY</span>}, <span class="co">//fields to display</span>
                 <span class="kw">new</span> <span class="dt">int</span>[] {R.<span class="fu">id</span>.<span class="fu">txt_list_item</span>, R.<span class="fu">id</span>.<span class="fu">txt_item_freq</span>},                       <span class="co">//where to display them</span>
                 <span class="dv">0</span>); <span class="co">//flags</span></code></pre></div>
 <p>Then we can use this adapter for the ListView in place of the <code>ArrayAdapter</code>!</p>

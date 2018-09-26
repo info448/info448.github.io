@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2017-12-05">
+<meta name="date" content="2018-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -136,6 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#toast"><i class="fa fa-check"></i>Toast</a></li>
 </ul></li>
 <li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#adding-interaction"><i class="fa fa-check"></i><b>1.5</b> Adding Interaction</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#kotlin-setup"><i class="fa fa-check"></i><b>1.6</b> Kotlin</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html"><i class="fa fa-check"></i><b>2</b> Resources and Layouts</a><ul>
 <li class="chapter" data-level="2.1" data-path="resources-and-layouts.html"><a href="resources-and-layouts.html#resources"><i class="fa fa-check"></i><b>2.1</b> Resources</a><ul>
@@ -317,7 +318,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="19" data-path="maps.html"><a href="maps.html"><i class="fa fa-check"></i><b>19</b> Maps</a><ul>
 <li class="chapter" data-level="19.1" data-path="maps.html"><a href="maps.html#create-a-map-activity"><i class="fa fa-check"></i><b>19.1</b> Create a Map Activity</a><ul>
 <li class="chapter" data-level="" data-path="maps.html"><a href="maps.html#getting-an-api-key"><i class="fa fa-check"></i>Getting an API Key</a></li>
-<li class="chapter" data-level="19.1.1" data-path="maps.html"><a href="maps.html#the-supportmapfragment"><i class="fa fa-check"></i><b>19.1.1</b> The <code class="unnumbered">SupportMapFragment</code></a></li>
+<li><a href="maps.html#the-supportmapfragment">The <code>SupportMapFragment</code></a></li>
 </ul></li>
 <li class="chapter" data-level="19.2" data-path="maps.html"><a href="maps.html#specifying-the-user-interface"><i class="fa fa-check"></i><b>19.2</b> Specifying the User Interface</a></li>
 <li class="chapter" data-level="19.3" data-path="maps.html"><a href="maps.html#markers-and-drawings"><i class="fa fa-check"></i><b>19.3</b> Markers and Drawings</a><ul>
@@ -417,9 +418,9 @@ If you have worked with <code>SQL</code> or another relational database system (
      <span class="co">//class cannot be instantiated</span>
      <span class="kw">private</span> <span class="fu">WordEntry</span>(){}
 
-     <span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> String TABLE_NAME = <span class="st">&quot;words&quot;</span>;
-     <span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> String COL_WORD = <span class="st">&quot;word&quot;</span>;
-     <span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> String COL_COUNT = <span class="st">&quot;count&quot;</span>;
+     <span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">String</span> TABLE_NAME = <span class="st">&quot;words&quot;</span>;
+     <span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">String</span> COL_WORD = <span class="st">&quot;word&quot;</span>;
+     <span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">String</span> COL_COUNT = <span class="st">&quot;count&quot;</span>;
 }</code></pre></div>
 <ul>
 <li><p>The class implements <a href="https://developer.android.com/reference/android/provider/BaseColumns.html"><code>BaseColumns</code></a>, which lets it inherit a few framework specific constants for free—in particular, the <code>_ID</code> variable which Content Providers rely on the database to have as a primary key.</p></li>
@@ -427,19 +428,19 @@ If you have worked with <code>SQL</code> or another relational database system (
 </ul>
 <p>Once we have defined the schema, we are ready to create and work with the database. In order to help us do this, we’re going to use a class called <a href="https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper.html"><code>SQLiteOpenHelper</code></a><a href="#fn37" class="footnoteRef" id="fnref37"><sup>37</sup></a>. This class offers a set of methods to help manage the database being created and upgraded (e.g., for migrations). Specifically, we will will <em>subclass</em> <code>SQLiteOpenHelper</code>, creating another nested class that represents the specific helper for our database.</p>
 <p>The subclass has a constructor that takes in a <code>Context</code>, and then “passes up” the database name and version to the parent class.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="fu">DatabaseHelper</span>(Context context){
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="fu">DatabaseHelper</span>(<span class="bu">Context</span> context){
     <span class="kw">super</span>(context, DATABASE_NAME, <span class="kw">null</span>, DATABASE_VERSION);
 }</code></pre></div>
 <p><code>SQLiteOpenHelper</code> also has two <code>abstract</code> methods (event callbacks) that we need to implement: what happens when the database is <em>created</em>, and what happens when the database is <em>upgraded</em>.</p>
 <p>When the database is first created, we’ll need to actually create the table to hold our words. This involves sending it an <code>SQL</code> command to create the table! This has been provided as a constant in the starter code.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> String CREATE_TASKS_TABLE =
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">String</span> CREATE_TASKS_TABLE =
     <span class="st">&quot;CREATE TABLE &quot;</span> + WordEntry.<span class="fu">TABLE_NAME</span> + <span class="st">&quot;(&quot;</span> +
-        WordEntry.<span class="fu">_ID</span> + <span class="st">&quot; INTEGER PRIMARY KEY AUTOINCREMENT&quot;</span> + <span class="st">&quot;, &quot;</span>+
+        WordEntry._ID + <span class="st">&quot; INTEGER PRIMARY KEY AUTOINCREMENT&quot;</span> + <span class="st">&quot;, &quot;</span>+
         WordEntry.<span class="fu">COL_WORD</span> + <span class="st">&quot; TEXT&quot;</span> + <span class="st">&quot;,&quot;</span>+
         WordEntry.<span class="fu">COL_COUNT</span> + <span class="st">&quot; INTEGER&quot;</span> +
       <span class="st">&quot;)&quot;</span>;
 
-<span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> String DROP_TASKS_TABLE =
+<span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">String</span> DROP_TASKS_TABLE =
     <span class="st">&quot;DROP TABLE IF EXISTS &quot;</span>+ WordEntry.<span class="fu">TABLE_NAME</span>;</code></pre></div>
 <ul>
 <li>We can do the same for dropping (deleting) the table as well.</li>
@@ -470,13 +471,13 @@ db.<span class="fu">insert</span>(WordEntry.<span class="fu">TABLE_NAME</span>, 
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">SQLiteQueryBuilder builder = <span class="kw">new</span> <span class="fu">SQLiteQueryBuilder</span>();
 builder.<span class="fu">setTables</span>(WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">TABLE_NAME</span>); <span class="co">//set the table to use</span>
 
-Cursor results = builder.<span class="fu">query</span>(
+<span class="bu">Cursor</span> results = builder.<span class="fu">query</span>(
         db,
-        <span class="kw">new</span> String[] {WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">COL_WORD</span>, WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">COL_COUNT</span>},
+        <span class="kw">new</span> <span class="bu">String</span>[] {WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">COL_WORD</span>, WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">COL_COUNT</span>},
         <span class="kw">null</span>, <span class="kw">null</span>, <span class="kw">null</span>, <span class="kw">null</span>, <span class="kw">null</span>); <span class="co">//5 nulls!</span>
 
 <span class="kw">while</span>(results.<span class="fu">moveToNext</span>()) {
-    String word = results.<span class="fu">getString</span>(results.<span class="fu">getColumnIndexOrThrow</span>(WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">COL_WORD</span>));
+    <span class="bu">String</span> word = results.<span class="fu">getString</span>(results.<span class="fu">getColumnIndexOrThrow</span>(WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">COL_WORD</span>));
     <span class="dt">int</span> freq = results.<span class="fu">getInt</span>(results.<span class="fu">getColumnIndexOrThrow</span>(WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">COL_COUNT</span>));
     Log.<span class="fu">v</span>(TAG, <span class="st">&quot;&#39;&quot;</span>+word+<span class="st">&quot;&#39; (&quot;</span>+freq+<span class="st">&quot;)&quot;</span>);
 }</code></pre></div>
@@ -538,14 +539,14 @@ There are a lot of steps and a lot of code involved in making a <code>ContentPro
 <p>As an example of this, let’s fill in the <code>getType()</code> method. The purpose of this method is to allow the ContentProvider to let whoever queries it know the <a href="https://en.wikipedia.org/wiki/Media_type">MIME Type</a> (media type) of the resource a URI is accessing. This lets the program specify whether the content provided by the Content Provider is an image, text, music, or some other type.</p>
 <ul>
 <li><p>The type we’re going to give back is a <code>Cursor</code> (list of rows in a table), so we’ll specify <a href="http://developer.android.com/guide/topics/providers/content-provider-creating.html#TableMIMETypes">MIME Types for that</a>:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> String <span class="fu">getType</span>(Uri uri) {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="bu">String</span> <span class="fu">getType</span>(Uri uri) {
     <span class="kw">switch</span>(sUriMatcher.<span class="fu">match</span>(uri)){
         <span class="kw">case</span> WORD_LIST_URI:
             <span class="kw">return</span> <span class="st">&quot;vnd.android.cursor.dir/&quot;</span>+AUTHORITY+<span class="st">&quot;.&quot;</span>+WORD_RESOURCE;
         <span class="kw">case</span> WORD_SINGLE_URI:
             <span class="kw">return</span> <span class="st">&quot;vnd.android.cursor.item/&quot;</span>+AUTHORITY+<span class="st">&quot;.&quot;</span>+WORD_RESOURCE;
         <span class="kw">default</span>:
-            <span class="kw">throw</span> <span class="kw">new</span> IllegalArgumentException(<span class="st">&quot;Unknown URI &quot;</span>+uri);
+            <span class="kw">throw</span> <span class="kw">new</span> <span class="bu">IllegalArgumentException</span>(<span class="st">&quot;Unknown URI &quot;</span>+uri);
     }
 }</code></pre></div>
 <ul>
@@ -563,9 +564,9 @@ There are a lot of steps and a lot of code involved in making a <code>ContentPro
     <span class="kw">case</span> WORD_LIST_URI: <span class="co">//all words</span>
       <span class="kw">break</span>; <span class="co">//no change</span>
     <span class="kw">case</span> WORD_SINGLE_URI: <span class="co">//single word</span>
-      builder.<span class="fu">appendWhere</span>(WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">_ID</span> + <span class="st">&quot;=&quot;</span> + uri.<span class="fu">getLastPathSegment</span>()); <span class="co">//restrict to that item</span>
+      builder.<span class="fu">appendWhere</span>(WordDatabase.<span class="fu">WordEntry</span>._ID + <span class="st">&quot;=&quot;</span> + uri.<span class="fu">getLastPathSegment</span>()); <span class="co">//restrict to that item</span>
     <span class="kw">default</span>:
-      <span class="kw">throw</span> <span class="kw">new</span> IllegalArgumentException(<span class="st">&quot;Unknown URI &quot;</span>+uri);
+      <span class="kw">throw</span> <span class="kw">new</span> <span class="bu">IllegalArgumentException</span>(<span class="st">&quot;Unknown URI &quot;</span>+uri);
 }</code></pre></div>
 <p>We’ll then just return the <code>Cursor</code> that we get as a result of the query.</p>
 <p>But there is also one more piece. We want to make sure that the Loader that is reading from our Content Provider (that loaded this <code>Cursor</code> object) is notified of any changes to the results of its query. This will allow the Loader to “automatically” query for new content if any of the data <em>at that URI</em> changes.</p>
@@ -575,7 +576,7 @@ There are a lot of steps and a lot of code involved in making a <code>ContentPro
 <ul>
 <li><p>Use the <code>UriMatcher</code> to make to only respond to proper Uris—you can’t insert into a single record, and you can’t update the entire list.</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">if</span>(sUriMatcher.<span class="fu">match</span>(uri) != WORD_LIST_URI) {
-  <span class="kw">throw</span> <span class="kw">new</span> IllegalArgumentException(<span class="st">&quot;Unknown URI &quot;</span>+uri);
+  <span class="kw">throw</span> <span class="kw">new</span> <span class="bu">IllegalArgumentException</span>(<span class="st">&quot;Unknown URI &quot;</span>+uri);
 }</code></pre></div></li>
 <li><p>For <code>insert()</code>, it is also possible to make sure that no “empty” entries are added to the database, and to return the result if the insertion is successful:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">if</span>(!values.<span class="fu">containsKey</span>(WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">COL_WORD</span>)){
@@ -591,7 +592,7 @@ There are a lot of steps and a lot of code involved in making a <code>ContentPro
     <span class="fu">getContext</span>().<span class="fu">getContentResolver</span>().<span class="fu">notifyChange</span>(wordUri, <span class="kw">null</span>);
     <span class="kw">return</span> wordUri; <span class="co">//return the URI for the entry</span>
 }
-<span class="kw">throw</span> <span class="kw">new</span> SQLException(<span class="st">&quot;Failed to insert row into &quot;</span> + uri);</code></pre></div></li>
+<span class="kw">throw</span> <span class="kw">new</span> <span class="bu">SQLException</span>(<span class="st">&quot;Failed to insert row into &quot;</span> + uri);</code></pre></div></li>
 <li><p>The <code>update()</code> method can be somewhat awkward because we need to basically add our <code>id</code> restriction to the user-given selection args:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="dt">int</span> count;
 <span class="kw">switch</span> (sUriMatcher.<span class="fu">match</span>(uri)) {
@@ -599,18 +600,18 @@ There are a lot of steps and a lot of code involved in making a <code>ContentPro
     count = db.<span class="fu">update</span>(WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">TABLE_NAME</span>, values, selection, selectionArgs); <span class="co">//just pass in params</span>
     <span class="kw">break</span>;
   <span class="kw">case</span> WORD_SINGLE_URI:
-    String wordId = uri.<span class="fu">getLastPathSegment</span>();
-    count = db.<span class="fu">update</span>(WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">TABLE_NAME</span>, values, WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">_ID</span> + <span class="st">&quot;=&quot;</span> + wordId <span class="co">//select by id</span>
-          + (!TextUtils.<span class="fu">isEmpty</span>(selection) ? <span class="st">&quot; AND (&quot;</span> + selection + &#39;)&#39; : <span class="st">&quot;&quot;</span>), selectionArgs); <span class="co">//apply params</span>
+    <span class="bu">String</span> wordId = uri.<span class="fu">getLastPathSegment</span>();
+    count = db.<span class="fu">update</span>(WordDatabase.<span class="fu">WordEntry</span>.<span class="fu">TABLE_NAME</span>, values, WordDatabase.<span class="fu">WordEntry</span>._ID + <span class="st">&quot;=&quot;</span> + wordId <span class="co">//select by id</span>
+          + (!TextUtils.<span class="fu">isEmpty</span>(selection) ? <span class="st">&quot; AND (&quot;</span> + selection + <span class="ch">&#39;)&#39;</span> : <span class="st">&quot;&quot;</span>), selectionArgs); <span class="co">//apply params</span>
     <span class="kw">break</span>;
   <span class="kw">default</span>:
-    <span class="kw">throw</span> <span class="kw">new</span> IllegalArgumentException(<span class="st">&quot;Unknown URI &quot;</span> + uri);
+    <span class="kw">throw</span> <span class="kw">new</span> <span class="bu">IllegalArgumentException</span>(<span class="st">&quot;Unknown URI &quot;</span> + uri);
 }
 <span class="kw">if</span> (count &gt; <span class="dv">0</span>) {
   <span class="fu">getContext</span>().<span class="fu">getContentResolver</span>().<span class="fu">notifyChange</span>(uri, <span class="kw">null</span>);
   <span class="kw">return</span> count;
 }
-<span class="kw">throw</span> <span class="kw">new</span> SQLException(<span class="st">&quot;Failed to update row &quot;</span> + uri);</code></pre></div></li>
+<span class="kw">throw</span> <span class="kw">new</span> <span class="bu">SQLException</span>(<span class="st">&quot;Failed to update row &quot;</span> + uri);</code></pre></div></li>
 </ul>
 <p>But in the end, we have a working ContentProvider that supports the same behaviors as the built in User Dictionary (well, except for <code>delete()</code>). We can now store data in our own database and easily access it off the UI Thread for use in things like ListViews. This is great for if you want to track and store any kind of structured information in your apps.</p>
 
