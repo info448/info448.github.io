@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2018-09-25">
+<meta name="date" content="2018-10-08">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -449,7 +449,10 @@ You can find the generated <code>R.java</code> file inside <code>app/build/gener
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">Resources</span> res = <span class="kw">this</span>.<span class="fu">getResources</span>(); <span class="co">//get access to application&#39;s resources</span>
 <span class="bu">String</span> myString = res.<span class="fu">getString</span>(R.<span class="fu">string</span>.<span class="fu">myString</span>); <span class="co">//look up value of that resource</span></code></pre></div>
 <ul>
-<li>The other comment method that utilizes resources will be <code>findViewById(int)</code>, which is used to reference a <code>View</code> element (e.g., a button) specified in a layout resource in order to call methods on it in Java, as in the example from the previous lecture.</li>
+<li><p>The other common method that utilizes resources will be <code>findViewById(int)</code>, which is used to reference a <code>View</code> element (e.g., a button) specified in a layout resource in order to call methods on it in Java, as in the example from the previous lecture.</p>
+<p class="alert alert-info">
+The <a href="https://kotlinlang.org/docs/tutorials/android-plugin.html">Kotlin Android Extension</a> will allow you to <code>import</code> layouts directly into Kotlin, so you don’t need to use <code>findViewById()</code>.
+</p></li>
 </ul>
 <p class="alert alert-warning">
 The <code>R</code> class is regenerated all time (any time you change a resource, which is often); when Eclipse was the recommend Android IDE, you often needed to manually regenerate the class so that the IDE’s index would stay up to date! You can perform a similar task in Android Studio by using <code>Build &gt; Clean Project</code> and <code>Build &gt; Rebuild Project</code>.
@@ -542,7 +545,8 @@ Android studio does come with a graphical <a href="https://developer.android.com
 </ul>
 <p>Once you have a reference to a View object in Java, it is possible to specify visual properties dynamically via Java methods (e.g., <code>setText()</code>, <code>setPadding()</code>). However, you should <strong>only</strong> use Java methods to specify View properties when they <em>need</em> to be dynamic (e.g., the text changes in response to a button click)—it is much cleaner and effective to specify as much visual detail in the XML resource files as possible. It’s also possible to dynamically replace one layout resource with another (see below).</p>
 <ul>
-<li>Views also have inspection methods such as <code>isVisible()</code> and <code>hasFocus()</code> if you need to check the View’s state.</li>
+<li><p>Views also have inspection methods such as <code>isVisible()</code> and <code>hasFocus()</code> if you need to check the View’s state.</p></li>
+<li><p>If you’re using the Kotlin Android Extension, you can access these properties directly.</p></li>
 </ul>
 <p class="alert alert-warning">
 <strong>DO NOT</strong> instantiate or define Views or View appearances in an Activity’s <code>onCreate()</code> method, unless the properties (e.g., content) truly cannot be determined before runtime! <strong>DO</strong> specify layouts in the XML instead.
@@ -552,8 +556,12 @@ Android studio does come with a graphical <a href="https://developer.android.com
 <h3>Practice</h3>
 <p>Add a new <a href="http://developer.android.com/reference/android/widget/ImageView.html"><code>ImageView</code></a> element that contains a picture. Be sure and specify its <code>id</code> and size (experiment with different options).</p>
 <p>You should specify the content of the image in the XML resource using the <code>android:src</code> attribute (use <code>@</code> to reference a <code>drawable</code>), but you can specify the content dynamically in Java code if you want to change it later.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">ImageView</span> imageView = (<span class="bu">ImageView</span>)<span class="fu">findViewById</span>(R.<span class="fu">id</span>.<span class="fu">img_view</span>);
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+<span class="bu">ImageView</span> imageView = (<span class="bu">ImageView</span>)<span class="fu">findViewById</span>(R.<span class="fu">id</span>.<span class="fu">img_view</span>);
 imageView.<span class="fu">setImageResource</span>(R.<span class="fu">drawable</span>.<span class="fu">my_image</span>);</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">val</span> <span class="va">imageView</span>:ImageView = findViewById&lt;ImageView&gt;(R.id.img_view)
+imageView.setImageResource(R.drawable.my_image);</code></pre></div>
 </div>
 </div>
 <div id="layouts" class="section level2">
@@ -612,8 +620,12 @@ imageView.<span class="fu">setImageResource</span>(R.<span class="fu">drawable</
 <p>As one option, you can <em>statically</em> include XML layouts inside other layouts by using an <a href="https://developer.android.com/training/improving-layouts/reusing-layouts.html"><code>&lt;include&gt;</code></a> element:</p>
 <div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;include</span><span class="ot"> layout=</span><span class="st">&quot;@layout/sub_layout&quot;</span><span class="kw">&gt;</span></code></pre></div>
 <p>But it is also possible to dynamically load views “manually” (e.g., in Java code) using the <a href="https://developer.android.com/reference/android/view/LayoutInflater.html"><code>LayoutInflator</code></a>. This is a class that has the job of “inflating” (rendering) Views. LayoutInflator is implicitly used in the <code>setContentView()</code> method, but can also be used independently with the following syntax:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">LayoutInflator inflator = <span class="fu">getLayoutInflator</span>(); <span class="co">//access the inflator (called on the Activity)</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+LayoutInflator inflator = <span class="fu">getLayoutInflator</span>(); <span class="co">//access the inflator (called on the Activity)</span>
 <span class="bu">View</span> myLayout = inflator.<span class="fu">inflate</span>(R.<span class="fu">layout</span>.<span class="fu">my_layout</span>, parentViewGroup, <span class="kw">true</span>); <span class="co">//to attach</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">val</span> <span class="va">inflator</span>: LayoutInflator = getLayoutInflator(); <span class="co">//access the inflator (called on the Activity)</span>
+<span class="kw">val</span> <span class="va">myLayout</span>: View = inflator.inflate(R.layout.my_layout, parentViewGroup, <span class="kw">true</span>); <span class="co">//to attach</span></code></pre></div>
 <p>Note that we never instantiate the <code>LayoutInflator</code>, we just access an object that is defined as part of the Activity.</p>
 <p>The <a href="http://developer.android.com/reference/android/view/LayoutInflater.html#inflate(int, android.view.ViewGroup, boolean)"><code>inflate()</code></a> method takes a couple of arguments:</p>
 <ul>
@@ -632,6 +644,9 @@ imageView.<span class="fu">setImageResource</span>(R.<span class="fu">drawable</
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//Java</span>
 ViewStub stub = (ViewStub)<span class="fu">findViewById</span>(R.<span class="fu">id</span>.<span class="fu">stub</span>);
 <span class="bu">View</span> inflated = stub.<span class="fu">inflate</span>();</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">val</span> <span class="va">stub</span> = findViewById&lt;ViewStub&gt;(R.id.stub);
+<span class="kw">val</span> <span class="va">inflated</span>: View = stub.inflate();</code></pre></div>
 <p>There are many other options for displaying or changing View content. Just remember to define as much of the View as possible in the XML, so that the Java code is kept simple and separate.</p>
 </div>
 </div>
@@ -664,7 +679,10 @@ ViewStub stub = (ViewStub)<span class="fu">findViewById</span>(R.<span class="fu
 <span class="ot">    android:layout_height=</span><span class="st">&quot;wrap_content&quot;</span>
 <span class="ot">    android:onClick=</span><span class="st">&quot;handleButtonClick&quot;</span> <span class="kw">/&gt;</span></code></pre></div>
 <p>The callback method is declared in the Java code as taking in a <code>View</code> parameter (which will be a reference to whatever View caused the event to occur) and returning <code>void</code>:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">handleButtonClick</span>(<span class="bu">View</span> view) { }</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+<span class="kw">public</span> <span class="dt">void</span> <span class="fu">handleButtonClick</span>(<span class="bu">View</span> view) { }</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">fun</span> <span class="fu">handleButtonClick</span>(<span class="va">view</span>: <span class="dt">View</span>) { }</code></pre></div>
 <p>We will utilize a mix of both of these strategies (defining callbacks in both the Java and the XML) in this class.</p>
 <p class="alert">
 <em>Author’s Opinion</em>: It is arguable about which approach is “better”. Specifying the callback method in the Java code helps keep the appearance and behavior separate, and avoids introducing hidden dependencies for resources (the Activity must provide the required callback). However, as buttons are made to be pressed, it isn’t unreasonable to give a “name” in the XML resource as to what the button will do, especially as the corresponding Java method may just be a “launcher” method that calls something else. Specifying the callback in the XML resource may often seem faster and easier, and we will use whichever option best supports clarity in our code.

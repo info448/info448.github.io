@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2018-09-25">
+<meta name="date" content="2018-10-08">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -547,7 +547,7 @@ hugList.<span class="fu">add</span>(<span class="kw">new</span> <span class="fu"
 <p>(<code>T</code> is a common variable name, short for “Type”. Other options include <code>E</code> for Elements in lists, <code>K</code> for Keys and <code>V</code> for Values in maps).</p>
 <p>And then everywhere you would have put a datatype (e.g., <code>TeddyBear</code>), you can just put the <code>T</code> variable instead. This will be replace by an <em>actual</em> type <strong>at compile time</strong>.</p>
 <ul>
-<li>Warning: <em>always</em> use single-letter variable names for generic types! If you try to name it something like <code>String</code> (e.g., <code>public class GiftBox&lt;String&gt;</code>), then Java will interpret the word <code>String</code> to be that variable type, rather than refering to the <code>java.lang.String</code> class. This a lot like declaring a variable <code>int Dog = 448</code>, and then calling <code>Dog.createPuppies()</code>.</li>
+<li>Warning: <em>always</em> use single-letter variable names for generic types! If you try to name it something like <code>String</code> (e.g., <code>public class GiftBox&lt;String&gt;</code>), then Java will interpret the word <code>String</code> to be that variable type, rather than referring to the <code>java.lang.String</code> class. This a lot like declaring a variable <code>int Dog = 448</code>, and then calling <code>Dog.createPuppies()</code>.</li>
 </ul>
 <p><strong><em>Practice: Try to make the <code>GiftBox</code> class generic and instantiate a new <code>GiftBox&lt;Husky&gt;</code></em></strong></p>
 </div>
