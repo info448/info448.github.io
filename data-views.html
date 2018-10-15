@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2018-10-10">
+<meta name="date" content="2018-10-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -380,7 +380,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="data-views" class="section level1">
 <h1><span class="header-section-number">Lecture 4</span> Data-Driven Views</h1>
-<p><a href="resources-and-layouts.html#resources-and-layouts">Lecture 3</a> discussed how to use Views to display content and support user interaction. This lecture extends those concepts and presents techniques for creating <strong>data-driven views</strong>—views that can <em>dynamically</em> present a data model in the form of a <em>scrollable list</em>. It also explains how to access data on the web using the <a href="https://developer.android.com/training/volley/index.html">Volley</a> library. Overall, this process demonstrates a common way to connect the user interface for the app (defined as XML) with logic and data controls (defined in Java), following the <strong>Model-View-Controller</strong> architecture found throughout the Android framework.</p>
+<p><a href="resources-and-layouts.html#resources-and-layouts">A previous lecture</a> discussed how to use Views to display content and support user interaction. This lecture extends those concepts and presents techniques for creating <strong>data-driven views</strong>—views that can <em>dynamically</em> present a data model in the form of a <em>scrollable list</em>. It also explains how to access data on the web using the <a href="https://developer.android.com/training/volley/index.html">Volley</a> library. Overall, this process demonstrates a common way to connect the user interface for the app (defined as XML) with logic and data controls (defined in Java), following the <strong>Model-View-Controller</strong> architecture found throughout the Android framework.</p>
 <p class="alert alert-info">
 This lecture references code found at <a href="https://github.com/info448/lecture04-lists" class="uri">https://github.com/info448/lecture04-lists</a>.
 </p>
@@ -407,12 +407,12 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 </ul>
 <p>In order to use a <code>ListView</code>, we need to get the pieces in place:</p>
 <ol style="list-style-type: decimal">
-<li><p>First we specify the <strong>model</strong>: some raw data. We will start with a simple <code>String[]</code>, filling it with placeholder data:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">String</span>[] data = <span class="kw">new</span> <span class="bu">String</span>[<span class="dv">99</span>];
-<span class="kw">for</span>(<span class="dt">int</span> i=<span class="dv">99</span>; i&gt;<span class="dv">0</span>; i--){
-    data[<span class="dv">99</span>-i] = i+ <span class="st">&quot; bottles of beer on the wall&quot;</span>;
-}</code></pre></div>
-<p>While we normally should define such hard-coded data as <a href="https://developer.android.com/guide/topics/resources/string-resource.html#StringArray">an XML resource</a>, we’ll create it dynamically for testing (and to make it changeable later!)</p></li>
+<li><p>First we specify the <strong>model</strong>: some raw data. We will start with a simple list of Strings, filling it with placeholder data:</p>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="kw">val</span> <span class="va">data</span> = mutableListOf&lt;<span class="kw">String</span>&gt;()
+<span class="cf">for</span>(i <span class="kw">in</span> <span class="dv">99</span> downTo <span class="dv">1</span>){
+    <span class="kw">data</span>.add(i.toString() + <span class="st">&quot; bottles of beer on the wall&quot;</span>)
+}   </code></pre></div>
+<p>While we normally should define such hard-coded data as <a href="https://developer.android.com/guide/topics/resources/string-resource.html#StringArray">an XML resource</a>, we’ll create it dynamically for testing (and to make it changeable later!). Using a List instead of an Array makes it easier to construct (and works the same way).</p></li>
 <li><p>Next we specify the <strong>view</strong>: a <code>View</code> to show for each datum in the list. Define an XML layout resource for that (<code>list_item</code> is a good name and a common idiom).</p>
 <p>We don’t really need to specify a full Layout (though we could if we wanted): just a basic <code>TextView</code> will suffice. Have the width <code>match_parent</code> and the height <code>wrap_content</code>. <em>Don’t forget an <code>id</code>!</em></p>
 <div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="co">&lt;!-- need to include the XML namespace (xmlns) so the `android` namespace validates --&gt;</span>
@@ -425,23 +425,28 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 </ol>
 <p>To finish the controller <code>ListView</code>, we ned to provide it with an <a href="https://developer.android.com/guide/topics/ui/declaring-layout.html#AdapterViews"><code>Adapter</code></a><a href="#fn13" class="footnoteRef" id="fnref13"><sup>13</sup></a> which will connect the <em>model</em> to the <em>view</em>. The Adapter does the “translation” work between model and view, performing a mapping from data types (e.g., a <code>String</code>) and View types (e.g., a <code>TextView</code>).</p>
 <p>Specifically, we will use an <a href="https://developer.android.com/reference/android/widget/ArrayAdapter.html"><code>ArrayAdapter</code></a>, which is one of the simplest Adapters to use (and because we have an array of data!) An <code>ArrayAdapter</code> creates Views by calling <code>.toString()</code> on each item in the array, and setting that <code>String</code> as the content of a <code>TextView</code>!</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ArrayAdapter&lt;<span class="bu">String</span>&gt; adapter = <span class="kw">new</span> ArrayAdapter&lt;<span class="bu">String</span>&gt;(<span class="kw">this</span>,
-    R.<span class="fu">layout</span>.<span class="fu">list_item_layout</span>, R.<span class="fu">layout</span>.<span class="fu">list_item_txtView</span>, myStringArray);</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">val</span> <span class="va">adapter</span> = ArrayAdapter&lt;<span class="kw">String</span>&gt;(<span class="kw">this</span>,
+    R.layout.list_item_layout, R.layout.list_item_txtView, myStringArray);</code></pre></div>
 <ul>
 <li>Note the parameters of the constructor: a <code>Context</code> to access resources, the layout resource to use for each item, the <code>TextView</code> within that layout (the target of the mapping), and the data array (the source of the mapping). Also note that this instance utilizes <a href="java-review.html#generics"><em>generics</em></a>: we’re using an array of <code>Strings</code> (as opposed to an array of <code>Dogs</code> or some other type).</li>
 </ul>
 <p>We acquire a reference to the <code>ListView</code> with <code>findViewById()</code>, and call <code>ListView#setAdapter()</code> to attach the adapter to that controller.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">ListView</span> listView = (<span class="bu">ListView</span>)<span class="fu">findViewById</span>(R.<span class="fu">id</span>.<span class="fu">list_view</span>);
-listView.<span class="fu">setAdapter</span>(adapter);</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin </span>
+<span class="kw">val</span> <span class="va">listView</span> = findViewById&lt;ListView&gt;(R.id.list_view)
+listView.setAdapter(adapter)</code></pre></div>
 <p>And that’s all that is needed to create a scrollable list of data! To track the process: the Adapter will go through each item in the <em>model</em>, and “translate” that item into the contents of a View. These Views will then be displayed in a scrollable list.</p>
 <p>Each item in this list is selectable (can be given an <code>onClick</code> callback). This allows us to click on any item in order to (for example) get more details about the item. Utilize the <code>AdapterView#setOnItemClickListener(OnItemClickListener)</code> function to register the callback.</p>
 <ul>
 <li>The <code>position</code> parameter in the <code>onItemClick()</code> callback is the index of the item which was clicked. Use <code>(Type)parent.getItemAtPosition(position)</code> to access the data value associated with that View.</li>
 </ul>
 <p>Additionally, each item does have an individual layout, so you can customize these appearances (e.g., if our layout also wanted to include pictures). See <a href="https://github.com/codepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView#row-view-recycling">this tutorial</a> for an example on making a custom adapter to fill in multiple <code>Views</code> with data from a list!</p>
-<p class="alert alert-info">
-And remember, a <code>GridView</code> is basically the same thing (in fact, we can just change over that and have everything work, if we use <em>polymorphism</em>!)
+<div class="alert alert-info">
+<p>
+And remember, a <code>GridView</code> is basically the same thing (in fact, we can just change over that and have everything work, if we use <em>polymorphism</em>!) Note that the data type for the <code>AdapterView</code> is a little thorny if you want to be generic about it:
 </p>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="kw">val</span> <span class="va">adapterView</span> = findViewById&lt;AdapterView&lt;ArrayAdapter&lt;<span class="kw">String</span>&gt;&gt;&gt;(R.id.list_view)</code></pre></div>
+</div>
 <!--### **break**-->
 </div>
 <div id="networking-with-volley" class="section level2">
@@ -472,8 +477,9 @@ Volley’s main “competitor” is the <a href="http://square.github.io/retrofi
 <li>A <code>Response.ErrorListener</code> object, which defines a callback function to be executed in case of an error.</li>
 </ol>
 </div>
-<p>Because the last two <em>listener</em> objects are usually defined with anonymous classes, this can make the Request constructor look more complicated than it is:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//silly example: get 20 random dinosaur names</span>
+<p>Because the last two <em>listener</em> objects are usually defined with anonymous classes, this can make the Request constructor look more complicated than it is (though Kotlin’s use of lambdas helps):</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+<span class="co">//silly example: get 20 random dinosaur names</span>
 <span class="bu">String</span> url = <span class="st">&quot;http://dinoipsum.herokuapp.com/api/?format=text&amp;words=20&amp;paragraphs=1&quot;</span>;
 
 <span class="bu">Request</span> myRequest = <span class="kw">new</span> <span class="fu">StringRequest</span>(<span class="bu">Request</span>.<span class="fu">Method</span>.<span class="fu">GET</span>, url,
@@ -487,9 +493,20 @@ Volley’s main “competitor” is the <a href="http://square.github.io/retrofi
                 Log.<span class="fu">e</span>(TAG, error.<span class="fu">toString</span>());
             }
         });</code></pre></div>
-<p>(Also note that the <code>Response.Listener</code> is a <em>generic</em> class, in which we specify the format we’re expecting the response to come back in. This is <code>String</code> for a <code>StringRequest</code>, but would be e.g., <code>JSONObject</code> for a <code>JsonObjectRequest</code>).</p>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">val</span> <span class="va">request</span> = StringRequest(Request.Method.GET, urlString,
+        <span class="co">//callback for success</span>
+        Response.Listener { response -&gt;
+            Log.v(TAG, response)
+        }, 
+        <span class="co">//callback for failure</span>
+        Response.ErrorListener { error -&gt; 
+            Log.e(TAG, error.toString()) 
+        })</code></pre></div>
+<p>(Also note that the <code>Response.Listener</code> is a <em>generic</em> class, in which we specify the format we’re expecting the response to come back in. This is <code>String</code> for a <code>StringRequest</code>, but would be e.g., <code>JSONObject</code> for a <code>JsonObjectRequest</code>). Kotlin handles some of this for us.</p>
 <p>In order to actually <em>send</em> this Request, you need a <a href="https://afzaln.com/volley/com/android/volley/RequestQueue.html"><code>RequestQueue</code></a>, which acts like a “dispatcher” and handles sending out the Requests on background threads and otherwise managing the network operations. We create a dispatcher with default parameters (for networking and caching) using the <code>Volley.newRequestQueue()</code> factory method:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">RequestQueue requestQueue = Volley.<span class="fu">newRequestQueue</span>(<span class="fu">getApplicationContext</span>());</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">val</span> <span class="va">requestQueue</span>: requestQueue = Volley.newRequestQueue(<span class="kw">this</span>.applicationContext);</code></pre></div>
 <p>The factory method takes in a Context for managing the cache; the best practice is to use the application’s Context so it isn’t dependent on a single Activity.</p>
 <p>Once you have a RequestQueue, you can add your request to that in order to “send” it:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">requestQueue.<span class="fu">add</span>(myRequest);</code></pre></div>
@@ -516,8 +533,9 @@ You can use the <code>JsonObjectRequest</code> class to download data as a JSON 
 <h3>RequestQueue Singletons</h3>
 <p>If you are going to make multiple network requests for your application (which you usually will for anything of a reasonable size), it is wasteful to repeatedly instantiate new <code>RequestQueue</code> objects—these can take up significant memory and step on each others toes.</p>
 <p>Instead, the best practice is to use the <a href="https://developer.android.com/training/volley/requestqueue.html#singleton">Singleton Design Pattern</a> to ensure that your entire application only uses a <em>single</em> RequestQueue.</p>
-<p>To do this, you will want to create an entire class (e.g., <code>RequestSingleton</code>) that will only ever be instantiated once (it will be a “singleton”). Since the Volley <code>RequestQueue</code> is controlled by this singleton, it means there will only ever be one <code>RequestQueue</code>.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> RequestSingleton { <span class="co">//make static if an inner class!</span>
+<p>To do this, you will want to create an entire class (e.g., <code>VolleyService</code>) that will only ever be instantiated once (it will be a “singleton”). Since the Volley <code>RequestQueue</code> is controlled by this singleton, it means there will only ever be one <code>RequestQueue</code>.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+<span class="kw">public</span> <span class="kw">class</span> RequestSingleton { <span class="co">//make static if an inner class!</span>
 
     <span class="co">//the single instance of this singleton</span>
     <span class="kw">private</span> <span class="dt">static</span> RequestSingleton instance;
@@ -550,6 +568,35 @@ You can use the <code>JsonObjectRequest</code> class to download data as a JSON 
         requestQueue.<span class="fu">add</span>(req);
     }
 }</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">private</span> <span class="kw">class</span> VolleyService 
+    <span class="kw">private</span> <span class="kw">constructor</span>(<span class="va">ctx</span>: <span class="dt">Context</span>) { <span class="co">//private constructor; cannot instantiate directly</span>
+    
+    <span class="kw">companion</span> <span class="kw">object</span> { <span class="co">//to hold the shared instances</span>
+        <span class="kw">private</span> <span class="kw">var</span> <span class="va">instance</span>: VolleyService? = <span class="kw">null</span> <span class="co">//the single instance of this singleton</span>
+
+        <span class="co">//call this &quot;factory&quot; method to access the Singleton</span>
+        <span class="kw">fun</span> <span class="fu">getInstance</span>(<span class="va">ctx</span>: <span class="dt">Context</span>): <span class="dt">VolleyService</span> {
+            <span class="co">//only create the singleton if it doesn&#39;t exist yet</span>
+            <span class="cf">if</span> (instance == <span class="kw">null</span>) {
+                instance = VolleyService(ctx)
+            }
+
+            <span class="kw">return</span> instance <span class="kw">as</span> VolleyService <span class="co">//force casting</span>
+        }
+    }
+
+    <span class="co">//from Kotlin docs</span>
+    <span class="kw">val</span> <span class="va">requestQueue</span>: RequestQueue <span class="kw">by</span> lazy { <span class="co">//instantiate once needed</span>
+        Volley.newRequestQueue(ctx.applicationContext) <span class="co">//return the context-based requestQueue</span>
+    }
+
+    <span class="co">//convenience wrapper method</span>
+    <span class="kw">fun</span> &lt;<span class="dt">T</span>&gt; <span class="fu">add</span>(<span class="va">req</span>: <span class="dt">Request</span>&lt;<span class="va">T</span>&gt;) {
+        requestQueue.add(req)
+    }
+}</code></pre></div>
+<p>See also the <a href="https://github.com/JetBrains/kotlin-examples/tree/master/gradle/android-volley">JetBrains Kotlin Demo</a> of Volley for further examples</p>
 <p>This structure will let you make multiple network requests from multiple components of your app, but without trying to have multiple “dispatchers” taking up memory.</p>
 </div>
 <div id="downloading-images" class="section level3 unnumbered">
@@ -562,27 +609,23 @@ The other popular image-management libraries are <a href="https://github.com/bum
 </p>
 <p>In order to effectively download images with Volley, you need to set up an <a href="https://afzaln.com/volley/com/android/volley/toolbox/ImageLoader.html"><code>ImageLoader</code></a>. This object will handling downloading remote images as well as <em>caching</em> them for the future.</p>
 <p>To instantiate an <code>ImageLoader</code>, you need to provide a <code>RequestQueue</code> as well as an <code>ImageCache</code> object that represents how image data should be cached (e.g., in memory, on disk, etc.). The Volley documentation suggests using a <code>LruCache</code> object for caching to memory (though you can use a <code>DiskBasedCache</code> as well):</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//instantiate the image loader</span>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="co">//instantiate the image loader (from Kotlin docs)</span>
 <span class="co">//params are the requestQueue and the Cache</span>
-ImageLoader imageLoader = <span class="kw">new</span> <span class="fu">ImageLoader</span>(requestQueue,
-        <span class="kw">new</span> ImageLoader.<span class="fu">ImageCache</span>() {  <span class="co">//define an anonymous Cache object</span>
-            <span class="co">//the cache instance variable</span>
-            <span class="kw">private</span> <span class="dt">final</span> LruCache&lt;<span class="bu">String</span>, Bitmap&gt; cache = <span class="kw">new</span> LruCache&lt;<span class="bu">String</span>, Bitmap&gt;(<span class="dv">20</span>);
-
-            <span class="co">//method for accessing the cache</span>
-            <span class="at">@Override</span>
-            <span class="kw">public</span> Bitmap <span class="fu">getBitmap</span>(<span class="bu">String</span> url) {
-                <span class="kw">return</span> cache.<span class="fu">get</span>(url);
-            }
-
-            <span class="co">//method for storing to the cache</span>
-            <span class="at">@Override</span>
-            <span class="kw">public</span> <span class="dt">void</span> <span class="fu">putBitmap</span>(<span class="bu">String</span> url, Bitmap bitmap) {
-                cache.<span class="fu">put</span>(url, bitmap);
-            }
-        });</code></pre></div>
+<span class="kw">val</span> <span class="va">imageLoader</span>: ImageLoader <span class="kw">by</span> lazy { <span class="co">//only instantiate when needed</span>
+    ImageLoader(requestQueue,
+            <span class="kw">object</span> : <span class="dt">ImageLoader</span>.<span class="dt">ImageCache</span> { <span class="co">//anonymous cache object</span>
+                <span class="kw">private</span> <span class="kw">val</span> <span class="va">cache</span> = LruCache&lt;<span class="kw">String</span>, Bitmap&gt;(<span class="dv">20</span>)
+                <span class="kw">override</span> <span class="kw">fun</span> <span class="fu">getBitmap</span>(<span class="va">url</span>: <span class="dt">String</span>): <span class="dt">Bitmap?</span> {
+                    <span class="kw">return</span> cache.<span class="kw">get</span>(url)
+                }
+                <span class="kw">override</span> <span class="kw">fun</span> <span class="fu">putBitmap</span>(<span class="va">url</span>: <span class="dt">String</span>, <span class="va">bitmap</span>: <span class="dt">Bitmap</span>) {
+                    cache.put(url, bitmap)
+                }
+            })
+}</code></pre></div>
 <ul>
-<li>It’s a good idea to make this <code>ImageLoader</code> an instance variable of the <code>RequestSingleton</code>.</li>
+<li>It’s a good idea to make this <code>ImageLoader</code> an instance variable of the <code>VolleyService</code>.</li>
 </ul>
 <p>Once you have the <code>ImageLoader</code>, you can use it to download an image by calling it’s <a href="https://afzaln.com/volley/com/android/volley/toolbox/ImageLoader.html#get(java.lang.String, com.android.volley.toolbox.ImageLoader.ImageListener)"><code>get()</code></a> method, specifying a callback listener that will be executed when the image is finished downloading.</p>
 <p>However, you almost always want to download an image in order to display it. Volley makes this easy by providing a customized View called <a href="https://afzaln.com/volley/com/android/volley/toolbox/NetworkImageView.html"><code>NetworkImageView</code></a>. A <code>NetworkImageView</code> is able to handle the downloading of its source image on its own, integrating that process into the Activity’s lifecycle (e.g., so it won’t download when the View isn’t displayed).</p>
@@ -597,8 +640,8 @@ ImageLoader imageLoader = <span class="kw">new</span> <span class="fu">ImageLoad
 <li>The <a href="https://developer.android.com/reference/android/widget/ImageView.ScaleType.html"><code>android:scaleType</code></a> attribute indicates how the image should be scaled to fit the View.</li>
 </ul>
 <p>In order to download an image into this View, you call the <code>setImageUrl()</code> method on the View from within your Java, specify the image url to load into the View and the <code>ImageLoader</code> to use for this network access:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">NetworkImageView netView = (NetworkImageView)<span class="fu">findViewById</span>(R.<span class="fu">id</span>.<span class="fu">img_remote</span>);
-netView.<span class="fu">setImageUrl</span>(<span class="st">&quot;https://ischool.uw.edu/fb-300x300.png&quot;</span>, imageLoader);</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="kw">val</span> <span class="va">imageView</span> = findViewById&lt;NetworkImageView&gt;(R.id.img_remote)
+netView.setImageUrl(<span class="st">&quot;https://ischool.uw.edu/fb-300x300.png&quot;</span>, imageLoader);</code></pre></div>
 <p>And that will let you download and show images from the Internet (without needing to make them into a <code>drawable</code> resource)!</p>
 <!-- ## RecyclerView
 The `ListView` is an effective way of creating scrollable lists of data. However, creating lists that run  -->
