@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2018-10-15">
+<meta name="date" content="2018-10-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -388,7 +388,7 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 <h2><span class="header-section-number">15.1</span> Drawing Graphics</h2>
 <!-- //graphics, mostly looking at what is provided, maybe a _minor_ demo -->
 <p>Android provides a <a href="https://developer.android.com/guide/topics/graphics/2d-graphics.html">2D Graphics API</a> similar in both spirit and usage to the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API">HTML5 Canvas API</a>: it provides an <em>interface</em> by which the developer can <em>programmatically</em> generate 2D, raster-based images. This API can be used for drawing graphs, showing manipulated images, and even performing animations!</p>
-<p>As in HTML5, in Android this API is available via the <a href="https://developer.android.com/reference/android/graphics/Canvas.html"><code>Canvas</code></a><a href="#fn51" class="footnoteRef" id="fnref51"><sup>51</sup></a> class. Similar to the HTML5 <code>&lt;canvas&gt;</code> element or the Java SE <a href="https://docs.oracle.com/javase/8/docs/api/java/awt/Graphics2D.html"><code>Graphics2D</code></a> class, the Android <code>Canvas</code> provides a graphical “context” upon which the developer can “draw” rectangles, circles, and even images (<code>Bitmaps</code>) to be shown on the screen.</p>
+<p>As in HTML5, in Android this API is available via the <a href="https://developer.android.com/reference/android/graphics/Canvas.html"><code>Canvas</code></a><a href="#fn52" class="footnoteRef" id="fnref52"><sup>52</sup></a> class. Similar to the HTML5 <code>&lt;canvas&gt;</code> element or the Java SE <a href="https://docs.oracle.com/javase/8/docs/api/java/awt/Graphics2D.html"><code>Graphics2D</code></a> class, the Android <code>Canvas</code> provides a graphical “context” upon which the developer can “draw” rectangles, circles, and even images (<code>Bitmaps</code>) to be shown on the screen.</p>
 <div id="custom-views" class="section level3 unnumbered">
 <h3>Custom Views</h3>
 <p>In order to draw pictures, we need to have a View to draw on (which will provide the <code>Canvas</code> context). The easiest way to get this View is to create it ourselves: define a <strong>custom View</strong> which we can specify as having a “drawn” appearance. We can make our own special <code>View</code> by subclassing it (remember: <code>Buttons</code> and <code>EditTexts</code> are just subclasses of <code>View</code>!), and then filling in a callback function (<code>onDraw()</code>) that specifies how that <code>View</code> is rendered on the screen.</p>
@@ -558,13 +558,13 @@ Hitting that 16fps can actually be pretty difficult, since determining <em>what<
 <p class="caption">Linearly interpolating colors</p>
 </div></li>
 </ul>
-<p>The main engine for doing this kind of interpolated animation in Android is the <a href="https://developer.android.com/guide/topics/graphics/prop-animation.html#value-animator"><code>ValueAnimator</code></a><a href="#fn52" class="footnoteRef" id="fnref52"><sup>52</sup></a> class. This class lets you specify the start state, end state, and animation duration. It will then be able to run through and calculate all of the “intermediate” values throughout the interpolated animation. The <code>ValueAnimator</code> class provides a number of static methods (e.g., <code>.ofInt()</code>, <code>.ofFloat()</code>, <code>.ofArgb()</code>) which creates “animators” for interpolating different <em>value types</em>. For example:</p>
+<p>The main engine for doing this kind of interpolated animation in Android is the <a href="https://developer.android.com/guide/topics/graphics/prop-animation.html#value-animator"><code>ValueAnimator</code></a><a href="#fn53" class="footnoteRef" id="fnref53"><sup>53</sup></a> class. This class lets you specify the start state, end state, and animation duration. It will then be able to run through and calculate all of the “intermediate” values throughout the interpolated animation. The <code>ValueAnimator</code> class provides a number of static methods (e.g., <code>.ofInt()</code>, <code>.ofFloat()</code>, <code>.ofArgb()</code>) which creates “animators” for interpolating different <em>value types</em>. For example:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ValueAnimator animation = ValueAnimator.<span class="fu">ofFloat</span>(0f, 1f); <span class="co">//interpolate between 0 and 1</span>
 animation.<span class="fu">setDuration</span>(<span class="dv">1000</span>); <span class="co">//over 1000ms (1 second)</span>
 animation.<span class="fu">start</span>(); <span class="co">//run the animation</span></code></pre></div>
 <p>Of course, just performing this interpolation over time doesn’t produce any visible result—it’s changing the numbers, but those numbers don’t correspond to anything.</p>
 <p>We can access the interpolated values by registering a <a href="https://developer.android.com/guide/topics/graphics/prop-animation.html#listeners">listener</a> and overriding the callback we’re interested in observing (e.g., <code>onAnimationUpdate()</code> from <code>ValueAnimator.AnimatorUpdateListener</code>). But more commonly, we want to have our interpolated animation change the <em>property</em> of some object—for example, the color of a View, the position of an Button, or the instance variables of an object such as a <code>Ball</code>.</p>
-<p>We can do this easily using the <a href="https://developer.android.com/guide/topics/graphics/prop-animation.html#object-animator"><code>ObjectAnimator</code></a><a href="#fn53" class="footnoteRef" id="fnref53"><sup>53</sup></a> subclass. This subclass runs an animation just like the <code>ValueAnimator</code>, but has the built-in functionality to change a property of an object on each interpolated step. It does this by calling a <strong>setter</strong> for that property—thus the object needs to have a <a href="http://docs.oracle.com/javaee/6/tutorial/doc/gjbbp.html">setter method</a> for the property we want to animate:</p>
+<p>We can do this easily using the <a href="https://developer.android.com/guide/topics/graphics/prop-animation.html#object-animator"><code>ObjectAnimator</code></a><a href="#fn54" class="footnoteRef" id="fnref54"><sup>54</sup></a> subclass. This subclass runs an animation just like the <code>ValueAnimator</code>, but has the built-in functionality to change a property of an object on each interpolated step. It does this by calling a <strong>setter</strong> for that property—thus the object needs to have a <a href="http://docs.oracle.com/javaee/6/tutorial/doc/gjbbp.html">setter method</a> for the property we want to animate:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//change the &quot;alpha&quot; property of foo: will call `foo.setAlpha(float)`</span>
 ObjectAnimator anim = ObjectAnimator.<span class="fu">ofFloat</span>(foo, <span class="st">&quot;alpha&quot;</span>, 0f, 1f);
 anim.<span class="fu">setDuration</span>(<span class="dv">1000</span>);
@@ -599,7 +599,7 @@ animSetXY.<span class="fu">start</span>();</code></pre></div>
   <span class="co">&lt;!-- ... --&gt;</span>
 <span class="kw">&lt;/set&gt;</span></code></pre></div>
 <ul>
-<li><p>See <a href="https://developer.android.com/guide/topics/resources/animation-resource.html#Property">Property Animation Resources</a><a href="#fn54" class="footnoteRef" id="fnref54"><sup>54</sup></a> for the full XML schema.</p></li>
+<li><p>See <a href="https://developer.android.com/guide/topics/resources/animation-resource.html#Property">Property Animation Resources</a><a href="#fn55" class="footnoteRef" id="fnref55"><sup>55</sup></a> for the full XML schema.</p></li>
 <li><p>Note that by defining animations as resources, it also means that we can easily have different device configurations use different animations (e.g., perhaps objects move faster on larger displays).</p></li>
 </ul>
 <p>In order to utilize the XML, we will need to <strong>inflate</strong> the Animator resource, just as we have done with Layouts:</p>
@@ -628,11 +628,11 @@ myView.<span class="fu">animate</span>().<span class="fu">x</span>(<span class="
 </div>
 <div class="footnotes">
 <hr />
-<ol start="51">
-<li id="fn51"><p><a href="https://developer.android.com/reference/android/graphics/Canvas.html" class="uri">https://developer.android.com/reference/android/graphics/Canvas.html</a><a href="graphics.html#fnref51">↩</a></p></li>
-<li id="fn52"><p><a href="http://developer.android.com/guide/topics/graphics/prop-animation.html#value-animator" class="uri">http://developer.android.com/guide/topics/graphics/prop-animation.html#value-animator</a><a href="graphics.html#fnref52">↩</a></p></li>
-<li id="fn53"><p><a href="http://developer.android.com/guide/topics/graphics/prop-animation.html#object-animator" class="uri">http://developer.android.com/guide/topics/graphics/prop-animation.html#object-animator</a><a href="graphics.html#fnref53">↩</a></p></li>
-<li id="fn54"><p><a href="http://developer.android.com/guide/topics/resources/animation-resource.html#Property" class="uri">http://developer.android.com/guide/topics/resources/animation-resource.html#Property</a><a href="graphics.html#fnref54">↩</a></p></li>
+<ol start="52">
+<li id="fn52"><p><a href="https://developer.android.com/reference/android/graphics/Canvas.html" class="uri">https://developer.android.com/reference/android/graphics/Canvas.html</a><a href="graphics.html#fnref52">↩</a></p></li>
+<li id="fn53"><p><a href="http://developer.android.com/guide/topics/graphics/prop-animation.html#value-animator" class="uri">http://developer.android.com/guide/topics/graphics/prop-animation.html#value-animator</a><a href="graphics.html#fnref53">↩</a></p></li>
+<li id="fn54"><p><a href="http://developer.android.com/guide/topics/graphics/prop-animation.html#object-animator" class="uri">http://developer.android.com/guide/topics/graphics/prop-animation.html#object-animator</a><a href="graphics.html#fnref54">↩</a></p></li>
+<li id="fn55"><p><a href="http://developer.android.com/guide/topics/resources/animation-resource.html#Property" class="uri">http://developer.android.com/guide/topics/resources/animation-resource.html#Property</a><a href="graphics.html#fnref55">↩</a></p></li>
 </ol>
 </div>
             </section>

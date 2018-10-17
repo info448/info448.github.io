@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2018-10-15">
+<meta name="date" content="2018-10-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -383,7 +383,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p class="alert alert-warning">
 This lecture is currently under revision.
 </p>
-<p>This lecture discusses a component of Android development that is <strong><em>not</em></strong> immediately visible to users: <a href="https://developer.android.com/guide/components/services.html"><strong>Services</strong></a><a href="#fn41" class="footnoteRef" id="fnref41"><sup>41</sup></a>. <em>Services</em> are sort of like Activities that don’t have a user interface or user interaction directly tied to them. Services can be launched by Activities or Applications, but then do their own thing in the background <em>even after the starting component is closed</em>. Once a Service is started, it keeps running until it is explicitly stopped (Services can be destroyed by the OS to save memory, similar to an Activity, but Services have higher <a href="https://developer.android.com/guide/topics/processes/process-lifecycle.html">“priority”</a> and so aren’t killed as readily).</p>
+<p>This lecture discusses a component of Android development that is <strong><em>not</em></strong> immediately visible to users: <a href="https://developer.android.com/guide/components/services.html"><strong>Services</strong></a><a href="#fn42" class="footnoteRef" id="fnref42"><sup>42</sup></a>. <em>Services</em> are sort of like Activities that don’t have a user interface or user interaction directly tied to them. Services can be launched by Activities or Applications, but then do their own thing in the background <em>even after the starting component is closed</em>. Once a Service is started, it keeps running until it is explicitly stopped (Services can be destroyed by the OS to save memory, similar to an Activity, but Services have higher <a href="https://developer.android.com/guide/topics/processes/process-lifecycle.html">“priority”</a> and so aren’t killed as readily).</p>
 <p>Some common uses for a Service include:</p>
 <ul>
 <li>Downloading or uploading data from/to a network in the background even if the app is closed</li>
@@ -444,9 +444,9 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 <ul>
 <li>Tasks such as network access are <strong>blocking</strong> method calls, which stop the Thread from continuing. A blocked <em>Main Thread</em> will lead to the infamous <strong>“Application not responding” (ANR)</strong> error!</li>
 </ul>
-<p>Thus we need to move any “slow” code (such as network access) <em>off</em> the Main Thread, onto a <strong>background thread</strong>, thereby allowing it to run without blocking the user interaction that occurs on the Main Thread. To do this in Android, we use a class called <a href="https://developer.android.com/reference/android/os/AsyncTask.html"><code>ASyncTask</code></a><a href="#fn42" class="footnoteRef" id="fnref42"><sup>42</sup></a> to perform a task (such as network access) asynchronously—without waiting for other Threads.</p>
+<p>Thus we need to move any “slow” code (such as network access) <em>off</em> the Main Thread, onto a <strong>background thread</strong>, thereby allowing it to run without blocking the user interaction that occurs on the Main Thread. To do this in Android, we use a class called <a href="https://developer.android.com/reference/android/os/AsyncTask.html"><code>ASyncTask</code></a><a href="#fn43" class="footnoteRef" id="fnref43"><sup>43</sup></a> to perform a task (such as network access) asynchronously—without waiting for other Threads.</p>
 <p class="alert alert-info">
-Learning Android Development involves knowing about what classes exist, and can be used to solve problems, but how were we able to learn about the existing of this highly useful (and specialized) <code>ASyncTask</code> class? We started from the official API Guide on <a href="https://developer.android.com/guide/components/processes-and-threads.html">Processes and Threads Guide</a><a href="#fn43" class="footnoteRef" id="fnref43"><sup>43</sup></a>, which introduces this class! Thus to learn about new Android options, <em>read the docs</em>.
+Learning Android Development involves knowing about what classes exist, and can be used to solve problems, but how were we able to learn about the existing of this highly useful (and specialized) <code>ASyncTask</code> class? We started from the official API Guide on <a href="https://developer.android.com/guide/components/processes-and-threads.html">Processes and Threads Guide</a><a href="#fn44" class="footnoteRef" id="fnref44"><sup>44</sup></a>, which introduces this class! Thus to learn about new Android options, <em>read the docs</em>.
 </p>
 <p>Note that an <code>ASyncTask</code> background thread will be <em>tied to the lifecycle of the Activity</em>: if we close the Activity, the network connection will die as well. A better option is often to use a <code>Service</code>, described below.</p>
 <p><code>ASyncTask</code> can be fairly complicated, but is a good candidate to practice learning from the API documentation. Looking at that documentation, the first thing you should notice (or would if the API was a little more readable) is that <code>ASyncTask</code> is <strong><code>abstract</code></strong>, meaning you’ll need to <em>subclass</em> it in order to use it. Thus you can subclass it as an <em>inner</em> class inside the Activity that will use it.</p>
@@ -528,7 +528,7 @@ Learning Android Development involves knowing about what classes exist, and can 
 <p>Having demonstrated the basic usage of a service, consider what is going on “under the hood”—starting with the <a href="https://developer.android.com/guide/components/services.html#LifecycleCallbacks">Service lifecycle</a>. There are actually two different “types” of Services, with different variations of the lifecycle. <strong>Started Services</strong> (or “unbound” Services) are those that are initiated via the <code>startService()</code> function, as in the above example. The other option, <strong>Bound Services</strong>, are Services that have “client” Activities bound to them to interact with; see below for details.</p>
 <div class="figure">
 <img src="img/services/service_lifecycle.png" alt="Service lifecycle diagram, from Google" />
-<p class="caption">Service lifecycle diagram, from Google<a href="#fn44" class="footnoteRef" id="fnref44"><sup>44</sup></a></p>
+<p class="caption">Service lifecycle diagram, from Google<a href="#fn45" class="footnoteRef" id="fnref45"><sup>45</sup></a></p>
 </div>
 <ul>
 <li><p>Just like with Activities, Services have an <code>onCreate()</code> method that is called when the Service is first created. Since Services don’t have a user interface to set up, so we don’t often do a lot in here.</p>
@@ -554,7 +554,7 @@ Learning Android Development involves knowing about what classes exist, and can 
   Toast.<span class="fu">makeText</span>(<span class="kw">this</span>, <span class="st">&quot;Intent received&quot;</span>, Toast.<span class="fu">LENGTH_SHORT</span>).<span class="fu">show</span>();
   <span class="kw">return</span> <span class="kw">super</span>.<span class="fu">onStartCommand</span>(intent, flags, startId);
 }</code></pre></div>
-<p>As a last point to note about the Service lifecycle consider the <code>int</code> that is returned by <code>onStartCommand()</code>. This <code>int</code> is a flag that indicates how the Service should <a href="https://developer.android.com/guide/components/services.html#ExtendingService">behave</a><a href="#fn45" class="footnoteRef" id="fnref45"><sup>45</sup></a> when it is “restarted” after having been destroyed:</p>
+<p>As a last point to note about the Service lifecycle consider the <code>int</code> that is returned by <code>onStartCommand()</code>. This <code>int</code> is a flag that indicates how the Service should <a href="https://developer.android.com/guide/components/services.html#ExtendingService">behave</a><a href="#fn46" class="footnoteRef" id="fnref46"><sup>46</sup></a> when it is “restarted” after having been destroyed:</p>
 <ul>
 <li><p><a href="https://developer.android.com/reference/android/app/Service.html#START_NOT_STICKY"><code>START_NOT_STICKY</code></a> indicates that if the Service is destroyed by the system, it should not be recreated. This is the “safest option” to avoid extraneous service executions; instead, just have the application restart the Service.</p></li>
 <li><p><a href="https://developer.android.com/reference/android/app/Service.html#START_STICKY"><code>START_STICKY</code></a> indicates that if the Service is destroyed by the system, it should be recreated when possible. At that point, <code>onStartCommand()</code> will be called by delivering a <code>null</code> Intent (unless there were other start Intents waiting to be delivered, in which case those are used). This option works well for media players or similar services that are running indefinitely (rather than executing specific commands).</p></li>
@@ -704,12 +704,12 @@ Keep in mind that binding a Service <strong>DOES NOT</strong> call <code>onStart
 </div>
 <div class="footnotes">
 <hr />
-<ol start="41">
-<li id="fn41"><p><a href="https://developer.android.com/guide/components/services.html" class="uri">https://developer.android.com/guide/components/services.html</a><a href="services.html#fnref41">↩</a></p></li>
-<li id="fn42"><p><a href="https://developer.android.com/reference/android/os/AsyncTask.html" class="uri">https://developer.android.com/reference/android/os/AsyncTask.html</a><a href="services.html#fnref42">↩</a></p></li>
-<li id="fn43"><p><a href="https://developer.android.com/guide/components/processes-and-threads.html" class="uri">https://developer.android.com/guide/components/processes-and-threads.html</a><a href="services.html#fnref43">↩</a></p></li>
-<li id="fn44"><p><a href="https://developer.android.com/images/service_lifecycle.png" class="uri">https://developer.android.com/images/service_lifecycle.png</a><a href="services.html#fnref44">↩</a></p></li>
-<li id="fn45"><p><a href="https://developer.android.com/guide/components/services.html#ExtendingService" class="uri">https://developer.android.com/guide/components/services.html#ExtendingService</a><a href="services.html#fnref45">↩</a></p></li>
+<ol start="42">
+<li id="fn42"><p><a href="https://developer.android.com/guide/components/services.html" class="uri">https://developer.android.com/guide/components/services.html</a><a href="services.html#fnref42">↩</a></p></li>
+<li id="fn43"><p><a href="https://developer.android.com/reference/android/os/AsyncTask.html" class="uri">https://developer.android.com/reference/android/os/AsyncTask.html</a><a href="services.html#fnref43">↩</a></p></li>
+<li id="fn44"><p><a href="https://developer.android.com/guide/components/processes-and-threads.html" class="uri">https://developer.android.com/guide/components/processes-and-threads.html</a><a href="services.html#fnref44">↩</a></p></li>
+<li id="fn45"><p><a href="https://developer.android.com/images/service_lifecycle.png" class="uri">https://developer.android.com/images/service_lifecycle.png</a><a href="services.html#fnref45">↩</a></p></li>
+<li id="fn46"><p><a href="https://developer.android.com/guide/components/services.html#ExtendingService" class="uri">https://developer.android.com/guide/components/services.html#ExtendingService</a><a href="services.html#fnref46">↩</a></p></li>
 </ol>
 </div>
             </section>

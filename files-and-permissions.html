@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2018-10-15">
+<meta name="date" content="2018-10-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -391,7 +391,7 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 <li><p><a href="https://developer.android.com/guide/topics/data/data-storage.html#filesInternal"><strong>Internal storage</strong></a> is always accessible, and by default files saved internally are <em>only</em> accessible to your app. Similarly, when the user uninstalls your app, the internal files are deleted. This is usually the best place for “private” file data, or files that will only be used by your application.</p></li>
 <li><p><a href="https://developer.android.com/guide/topics/data/data-storage.html#filesExternal"><strong>External storage</strong></a> is not always accessible (e.g., if the physical storage is removed), and is usually (but not always) <em>world-readable</em>. Normally files stored in External storage persist even if an app is uninstalled, unless certain options are used. This is usually used for “public” files that may be shared between applications.</p></li>
 </ul>
-<p><a href="https://developer.android.com/training/basics/data-storage/files.html#InternalVsExternalStorage">When do we use each?</a><a href="#fn34" class="footnoteRef" id="fnref34"><sup>34</sup></a> Basically, you should use <em>Internal</em> storage for “private” files that you don’t want to be available outside of the app, and use <em>External</em> storage otherwise.</p>
+<p><a href="https://developer.android.com/training/basics/data-storage/files.html#InternalVsExternalStorage">When do we use each?</a><a href="#fn35" class="footnoteRef" id="fnref35"><sup>35</sup></a> Basically, you should use <em>Internal</em> storage for “private” files that you don’t want to be available outside of the app, and use <em>External</em> storage otherwise.</p>
 <ul>
 <li>Note however that there are publicly-<strong>hidden</strong> <em>External</em> files—the big distinction between the storage locations is less visibility and more about <em>access</em>.</li>
 </ul>
@@ -399,7 +399,7 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 <ul>
 <li>The user can easily clear an application’s cache as well through the operating system’s UI.</li>
 </ul>
-<p>In code, using all of these storage locations involve working with the <a href="https://developer.android.com/reference/java/io/File.html"><code>File</code></a><a href="#fn35" class="footnoteRef" id="fnref35"><sup>35</sup></a> class. This class represents a “file” (or a “directory”) object, and is the same class you may be familiar with from Java SE.</p>
+<p>In code, using all of these storage locations involve working with the <a href="https://developer.android.com/reference/java/io/File.html"><code>File</code></a><a href="#fn36" class="footnoteRef" id="fnref36"><sup>36</sup></a> class. This class represents a “file” (or a “directory”) object, and is the same class you may be familiar with from Java SE.</p>
 <ul>
 <li><p>We can instantiate a <code>File</code> by passing it a directory (which is another <code>File</code>) and a filename (a <code>String</code>). Instantiating the file will create the file on disk (but empty, size 0) if it doesn’t already exist.</p></li>
 <li><p>We can test if a <code>File</code> is a folder with the <code>.isDirectory()</code> method, and create new directories by taking a <code>File</code> and calling <code>.mkdir()</code> on it. We can get a list of <code>Files</code> inside the directory with the <code>listFiles()</code> method. See the API documentation for more details and options.</p></li>
@@ -428,7 +428,7 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 <p>In order for an app to go outside of its sandbox (and use different components), it needs to request permission to leave. We ask for this permission (“Mother may I?”) by declaring out-of-sandbox usages explicitly in the <code>Manifest</code>, as we’ve done before with getting permission to access the Internet, send SMS messages, or access the User Dictionary.</p>
 <p>However, the Android permissions we can ask for are divided into <a href="https://developer.android.com/guide/topics/permissions/requesting.html#normal-dangerous">two categories</a>: <strong>normal</strong> and <strong>dangerous</strong>:</p>
 <ul>
-<li><p><strong>Normal permissions</strong> are those that may impact the user (so require permission), but don’t pose any serious risk. They are granted by the user at <em>install time</em>; if the user chooses to install the app, permission is granted to that app. See <a href="https://developer.android.com/guide/topics/permissions/normal-permissions.html">this list</a><a href="#fn36" class="footnoteRef" id="fnref36"><sup>36</sup></a> for examples of normal permissions. <code>INTERNET</code> is a normal permission.</p></li>
+<li><p><strong>Normal permissions</strong> are those that may impact the user (so require permission), but don’t pose any serious risk. They are granted by the user at <em>install time</em>; if the user chooses to install the app, permission is granted to that app. See <a href="https://developer.android.com/guide/topics/permissions/normal-permissions.html">this list</a><a href="#fn37" class="footnoteRef" id="fnref37"><sup>37</sup></a> for examples of normal permissions. <code>INTERNET</code> is a normal permission.</p></li>
 <li><p><strong>Dangerous permissions</strong>, on the other hand, have the risk of violating a user’s privacy, or otherwise messing with the user’s device or other apps. These permissions <em>also</em> need to be granted at install time. But <strong><em>IN ADDITION</em></strong>, since API 23 (Android 6.0 Marshmallow), users <em>additionally</em> need to grant dangerous permission access <strong>at runtime</strong>, when the app tries to actually invoke the “permitted” dangerous action.</p>
 <ul>
 <li><p>The user grants permission via a system-generated pop-up dialog. Note that permissions are granted in “groups”, so if the user agrees to give you <code>RECEIVE_SMS</code> permission, you get <code>SEND_SMS</code> permission as well. See the <a href="https://developer.android.com/guide/topics/permissions/requesting.html#perm-groups">list of permission groups</a>.</p></li>
@@ -641,10 +641,10 @@ This section may be out of date and needs further testing for accuracy.
 </div>
 <div class="footnotes">
 <hr />
-<ol start="34">
-<li id="fn34"><p><a href="https://developer.android.com/training/basics/data-storage/files.html#InternalVsExternalStorage" class="uri">https://developer.android.com/training/basics/data-storage/files.html#InternalVsExternalStorage</a><a href="files-and-permissions.html#fnref34">↩</a></p></li>
-<li id="fn35"><p><a href="https://developer.android.com/reference/java/io/File.html" class="uri">https://developer.android.com/reference/java/io/File.html</a><a href="files-and-permissions.html#fnref35">↩</a></p></li>
-<li id="fn36"><p><a href="https://developer.android.com/guide/topics/permissions/normal-permissions.html" class="uri">https://developer.android.com/guide/topics/permissions/normal-permissions.html</a><a href="files-and-permissions.html#fnref36">↩</a></p></li>
+<ol start="35">
+<li id="fn35"><p><a href="https://developer.android.com/training/basics/data-storage/files.html#InternalVsExternalStorage" class="uri">https://developer.android.com/training/basics/data-storage/files.html#InternalVsExternalStorage</a><a href="files-and-permissions.html#fnref35">↩</a></p></li>
+<li id="fn36"><p><a href="https://developer.android.com/reference/java/io/File.html" class="uri">https://developer.android.com/reference/java/io/File.html</a><a href="files-and-permissions.html#fnref36">↩</a></p></li>
+<li id="fn37"><p><a href="https://developer.android.com/guide/topics/permissions/normal-permissions.html" class="uri">https://developer.android.com/guide/topics/permissions/normal-permissions.html</a><a href="files-and-permissions.html#fnref37">↩</a></p></li>
 </ol>
 </div>
             </section>

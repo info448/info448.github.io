@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2018-10-15">
+<meta name="date" content="2018-10-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -426,7 +426,7 @@ If you have worked with <code>SQL</code> or another relational database system (
 <li><p>The class implements <a href="https://developer.android.com/reference/android/provider/BaseColumns.html"><code>BaseColumns</code></a>, which lets it inherit a few framework specific constants for free—in particular, the <code>_ID</code> variable which Content Providers rely on the database to have as a primary key.</p></li>
 <li><p>We create a different nested class for each table in the database (sheet in a spreadsheet). This allows us to use Java-style namespacing (dot notation) to refer to different tables in a single database.</p></li>
 </ul>
-<p>Once we have defined the schema, we are ready to create and work with the database. In order to help us do this, we’re going to use a class called <a href="https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper.html"><code>SQLiteOpenHelper</code></a><a href="#fn37" class="footnoteRef" id="fnref37"><sup>37</sup></a>. This class offers a set of methods to help manage the database being created and upgraded (e.g., for migrations). Specifically, we will will <em>subclass</em> <code>SQLiteOpenHelper</code>, creating another nested class that represents the specific helper for our database.</p>
+<p>Once we have defined the schema, we are ready to create and work with the database. In order to help us do this, we’re going to use a class called <a href="https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper.html"><code>SQLiteOpenHelper</code></a><a href="#fn38" class="footnoteRef" id="fnref38"><sup>38</sup></a>. This class offers a set of methods to help manage the database being created and upgraded (e.g., for migrations). Specifically, we will will <em>subclass</em> <code>SQLiteOpenHelper</code>, creating another nested class that represents the specific helper for our database.</p>
 <p>The subclass has a constructor that takes in a <code>Context</code>, and then “passes up” the database name and version to the parent class.</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="fu">DatabaseHelper</span>(<span class="bu">Context</span> context){
     <span class="kw">super</span>(context, DATABASE_NAME, <span class="kw">null</span>, DATABASE_VERSION);
@@ -620,8 +620,8 @@ There are a lot of steps and a lot of code involved in making a <code>ContentPro
 </div>
 <div class="footnotes">
 <hr />
-<ol start="37">
-<li id="fn37"><p><a href="https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper.html" class="uri">https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper.html</a><a href="databases.html#fnref37">↩</a></p></li>
+<ol start="38">
+<li id="fn38"><p><a href="https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper.html" class="uri">https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper.html</a><a href="databases.html#fnref38">↩</a></p></li>
 </ol>
 </div>
             </section>

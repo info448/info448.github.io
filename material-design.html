@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2018-10-15">
+<meta name="date" content="2018-10-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -387,6 +387,9 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 <p class="alert alert-warning">
 Material Design support was introduced in API 21 Lollipop, and so a device running that version of Android or later is required to access all the Material features supported by Android. However, most functionality is also available via <a href="https://developer.android.com/training/material/compatibility.html">compatibility libraries</a> (i.e., <code>AppCompat</code>), and so can be utilized on older devices as well.
 </p>
+<p class="alert alert-warning">
+Google is in the process of updating their Material Design implementation to use <a href="https://material.io/develop/android/">Material Design Components (MDC)</a>. As that version is still in beta and only available on Android Pie, this lecture describes how to use the “legacy” version of the Material support library.
+</p>
 <div id="the-material-design-language" class="section level2">
 <h2><span class="header-section-number">5.1</span> The Material Design Language</h2>
 <p><strong>Material design</strong> is a <em>design language</em>: a “vocabulary” of visual and interactive patterns that are shared across systems. Material forms both a “look and feel” for Google applications and modern (API 21+) Android apps in general, as well as providing a</p>
@@ -416,10 +419,10 @@ This lecture focuses on ways to implement specific aspects of the Material Desig
 <li>You can see what specific properties are applied by these styles and themes by browsing the <a href="https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/core/res/res/values">source code</a> for the Android framework—check out the <code>styles_material.xml</code> and <code>themes_material.xml</code> (these will also reference values defined in the variable <code>color</code> and <code>dimens</code> resources). The <code>AppCompat</code> styles and themes can be <a href="https://android.googlesource.com/platform/frameworks/support.git/+/refs/heads/master/v7/appcompat/res/values/">source code</a> for the <code>v7</code> support library.</li>
 </ul>
 <!-- App bar stuff here? Also check old book (s17)-->
-<!-- Let's start by pointing to one of the most prominent visual components in the default app: the [___App Bar___](https://developer.android.com/training/appbar/index.html) or ___Action Bar___. This acts as the sort of "header" for your app, providing a dedicated space for navigation and interaction (e.g., through menus). The [`ActionBar`](https://developer.android.com/reference/android/support/v7/app/ActionBar.html)^[http://developer.android.com/reference/android/support/v7/app/ActionBar.html] is a specific type of [`Toolbar`](https://developer.android.com/reference/android/support/v7/widget/Toolbar.html) that is most frequently used as the App Bar, offering a particular "look and feel" common to Android applications.
-
-While the `AppCompatActivity` used throughout this course automatically provides an Action Bar for the app, it is also possible to add it directly (such as if you are using a different Activity subclass). To add your own Action Bar, you specify a **theme** that does _not_ include an `ActionBar`, and then include an `<android.support.v7.window.Toolbar>` element inside your layout wherever you want the toolbar to go. See [Setting up the App Bar](http://developer.android.com/training/appbar/setting-up.html) for details. This will also allow you to put the Toolbar anywhere in the application's layout (e.g., if you want it to be stuck to the bottom). -->
-<p>In practice, the biggest part of utilizing a Material Theme is defining the <a href="https://developer.android.com/training/material/theme.html#ColorPalette">color palette</a> for your app. The Material design specification describes a broad color palette (with available <a href="https://material.io/guidelines/style/color.html#color-color-palette">swatches</a>); however, it is often more useful to pick your colors using the provided <a href="https://material.io/color/#!/"><strong>color picker tool</strong></a><a href="#fn14" class="footnoteRef" id="fnref14"><sup>14</sup></a>, which allows you to easily experiment with different color combinations.</p>
+<!-- Don't do this in lecture... -->
+<p>Let’s start by pointing to one of the most prominent visual components in the default app: the <a href="https://developer.android.com/training/appbar/index.html"><strong><em>App Bar</em></strong></a> or <strong><em>Action Bar</em></strong>. This acts as the sort of “header” for your app, providing a dedicated space for navigation and interaction (e.g., through menus). The <a href="https://developer.android.com/reference/android/support/v7/app/ActionBar.html"><code>ActionBar</code></a><a href="#fn14" class="footnoteRef" id="fnref14"><sup>14</sup></a> is a specific type of <a href="https://developer.android.com/reference/android/support/v7/widget/Toolbar.html"><code>Toolbar</code></a> that is most frequently used as the App Bar, offering a particular “look and feel” common to Android applications.</p>
+<p>While the <code>AppCompatActivity</code> used throughout this course automatically provides an Action Bar for the app, it is also possible to add it directly (such as if you are using a different Activity subclass). To add your own Action Bar, you specify a <strong>theme</strong> that does <em>not</em> include an <code>ActionBar</code>, and then include an <code>&lt;android.support.v7.window.Toolbar&gt;</code> element inside your layout wherever you want the toolbar to go. See <a href="http://developer.android.com/training/appbar/setting-up.html">Setting up the App Bar</a> for details. This will also allow you to put the Toolbar anywhere in the application’s layout (e.g., if you want it to be stuck to the bottom).</p>
+<p>In practice, the biggest part of utilizing a Material Theme is defining the <a href="https://developer.android.com/training/material/theme.html#ColorPalette">color palette</a> for your app. The Material design specification describes a broad color palette (with available <a href="https://material.io/guidelines/style/color.html#color-color-palette">swatches</a>); however, it is often more useful to pick your colors using the provided <a href="https://material.io/color/#!/"><strong>color picker tool</strong></a><a href="#fn15" class="footnoteRef" id="fnref15"><sup>15</sup></a>, which allows you to easily experiment with different color combinations.</p>
 <ul>
 <li>Pick your <em>primary</em> and <em>secondary</em> color, and then assign the resource values <code>colorPrimary</code>, <code>colorPrimaryDark</code>, and <code>colorAccent</code> in <code>res/values/colors.xml</code>. This will let you easily “brand” your application.</li>
 </ul>
@@ -439,8 +442,9 @@ SVG is used to represent <a href="https://en.wikipedia.org/wiki/Vector_graphics"
 <div id="design-support-libraries" class="section level2">
 <h2><span class="header-section-number">5.3</span> Design Support Libraries</h2>
 <p>In addition to the styling and resource properties available as part of the Android framework, there are also additional components available through extra <a href="https://developer.android.com/training/material/design-library.html"><strong>support libraries</strong></a>.</p>
-<p>Similar to Volley, these libraries are not built into Android and so need to be explicitly listed as dependencies in your app’s <code>build.gradle</code> file. For example:</p>
-<pre class="gradle"><code>compile &#39;com.android.support:design:26.1.0&#39;</code></pre>
+<p>Similar to Volley, these libraries are not built into Android and so need to be explicitly listed under <code>dependencies</code> in your app’s <code>build.gradle</code> file. For example:</p>
+<pre class="gradle"><code>//note the version number needs to match your SDK version
+implementation &#39;com.android.support:design:28.0.0&#39;</code></pre>
 <p>will include the latest version (as of this writing) of the <strong>design support library</strong>, which includes elements such as the Floating Action Button and Coordinator Layouts (described below).</p>
 <div class="alert alert-warning">
 <p>
@@ -462,25 +466,28 @@ SVG is used to represent <a href="https://en.wikipedia.org/wiki/Vector_graphics"
 <h4>RecyclerView</h4>
 <p>The <a href="https://developer.android.com/training/material/lists-cards.html#RecyclerView"><code>RecyclerView</code></a> is a more advanced version of a <code>ListView</code>, providing a more robust system for support interactive Views within the list as well as providing animations for things like adding and removing list items.</p>
 <p>This class is part of the <code>v7</code> support library (and not the Material Design library specifically), and so you will need to include it specifically in your <em>app’s</em> <code>build.gradle</code> file (the same way you included Volley):</p>
-<pre class="gradle"><code>compile &#39;com.android.support:cardview-v7:26.1.0&#39;</code></pre>
+<pre class="gradle"><code>implementation &#39;com.android.support:cardview-v7:28.0.0&#39;</code></pre>
 <p>Implementing a <code>RecyclerView</code> is very similar to implementing a <code>ListView</code> (with the addition of the <a href="https://developer.android.com/training/improving-layouts/smooth-scrolling.html#ViewHolder">ViewHolder pattern</a>), though you also need to declare a <code>LayoutManager</code> to specific if your RecyclerView should use a List or a Grid.</p>
-<p>The best way to understand the RecyclerView is to look at the example and modify that to fit your particular item view. For example, you can change a ListView into a RecyclerView by adapting the sample code provided by Google’s <a href="https://developer.android.com/training/material/lists-cards.html#RecyclerView">official documentation</a><a href="#fn15" class="footnoteRef" id="fnref15"><sup>15</sup></a>:</p>
+<p>The best way to understand the RecyclerView is to look at the example and modify that to fit your particular item view. For example, you can change a ListView into a RecyclerView by adapting the sample code provided by Google’s <a href="https://developer.android.com/guide/topics/ui/layout/recyclerview">official documentation</a><a href="#fn16" class="footnoteRef" id="fnref16"><sup>16</sup></a>:</p>
 <ul>
 <li><p>First, you will need to replace the XML View declaration with a <code>&lt;android.support.v7.widget.RecyclerView&gt;</code> element. In effect, we’re just modifying the <strong>controller</strong> for the list.</p></li>
-<li><p>There are a few extra steps when setting up the <code>RecyclerView</code> in the Java code. In particular, you will also need to associate a <code>LayoutManager</code> object to with the View—for example, a <code>LinearLayoutManager</code> to show items in a line (a la a ListView), or a <code>GridLayoutManager</code> to show items in a grid (a la a GridView).</p></li>
+<li><p>There are a few extra steps when setting up the <code>RecyclerView</code> in the Java code. In particular, you will also need to associate a <code>LayoutManager</code> object to with the View—for example, a <code>LinearLayoutManager</code> to show items in a line (a la a ListView), or a <code>GridLayoutManager</code> to show items in a grid (a la a GridView).</p>
+<ul>
+<li><p>In Kotlin, these can be assigned using the <code>.apply()</code> method. This method takes a callback function, and executes each line in that callback function with the object (e.g., the <code>recyclerView</code>) scoped as <code>this</code>. This is a shortcut for calling lots of methods on the same object in a row.</p>
+<p>Similar shortcuts are provided by the <code>run()</code>, <code>with()</code> and <code>let()</code> functions. See <a href="https://medium.com/@elye.project/mastering-kotlin-standard-functions-run-with-let-also-and-apply-9cd334b0ef84">this guide</a> for a clear explanation.</p></li>
+</ul></li>
 <li><p>All <code>RecyclerViews</code> require <em>custom adapters</em>: we cannot just use a built-in adapter such as <code>ArrayAdapter</code>. To do this, create a class that <code>extends RecyclerView.Adapter&lt;VH&gt;</code>.</p>
 <ul>
-<li><p>The generic in this class is a class representing a <a href="https://developer.android.com/training/improving-layouts/smooth-scrolling.html#ViewHolder">View Holder</a>. This is a pattern by which each individual Views that will be inflated and references are stored as individual <em>objects</em> with the particular Views to be modified (e.g., <code>TextView</code>) saved as instance variables. This avoids the need for the adapter to repeatedly use <code>findViewById()</code>, which is an expensive operation (since it involves crawling the View hierarchy tree!)</p>
-<p>The <code>ViewHolder</code> will be <em>another</em> class—usually an inner class of the adapter. It acts as a simple “container” object (similar to a <code>struct</code> in C). You can assign these instance variables the results of the <code>findViewById()</code> calls in the ViewHolder’s constructor.</p></li>
+<li><p>The generic in this class is a class representing a <a href="https://developer.android.com/training/improving-layouts/smooth-scrolling.html#ViewHolder">View Holder</a>. This is a pattern by which each individual View that will be inflated and referenced is stored as an individual <em>object</em> with the particular Views to be modified (e.g., <code>TextView</code>) saved as instance variables. This avoids the need for the adapter to repeatedly use <code>findViewById()</code>, which is an expensive operation (since it involves crawling the View hierarchy tree!)</p>
+<p>The <code>ViewHolder</code> will be <em>another</em> class—usually an inner class of the adapter. We can treat it as a <code>data</code> class (a simple “container” object, similar to a <code>struct</code> in C). but don’t need to declare it as such directly. If needed, you can assign these instance variables the results of the <code>findViewById()</code> calls when the ViewHolder object is initialized.</p></li>
 <li><p>The <code>RecyclerView</code> (not the <code>ViewHolder</code>) requires you to override the <code>onCreateViewHolder()</code> method, which will <code>inflate()</code> the View and instantiate a <code>ViewHolder</code> for each item when that item needs to be displayed for the first time.</p></li>
-<li><p>In the overridden <code>onBindViewHolder()</code> you can do the actual work of assigning model content to the particular View (e.g., called <code>setText()</code>). You don’t need to use <code>findViewById()</code> here, because you’ve already saved a reference to that View in the <code>ViewHolder</code>!</p></li>
+<li><p>In the overridden <code>onBindViewHolder()</code> you can do the actual work of assigning model content to the particular View (e.g., called <code>setText()</code>). You don’t need to use <code>findViewById()</code> here, because you’ve already saved a reference to that View in the <code>ViewHolder</code>, so you can assign to it directly!</p></li>
 <li><p>The <code>getItemCount()</code> is used internally for the RecyclerView to determine when you’ve gotten to the “end” of the list.</p></li>
 </ul></li>
 <li><p>Finally, you can assign the custom adapter to the <code>RecyclerView</code> in order to associate the model and the View.</p></li>
 </ul>
-<p>And that’s about it! While it is more code and more complex than a basic ListView, as soon as you’ve added in the ViewHolder pattern or done any other kinds of customizations, you’re basically at the same level. Additionally</p>
+<p>And that’s about it! While it is more code and more complex than a basic ListView, as soon as you’ve added in the ViewHolder pattern or done any other kinds of customizations, you’re basically at the same level. Using a RecyclerView instead of a ListView also enables built-in animations, as well as common user actions such as “drag-to-order” or “swipe-to-dismiss”. See <a href="https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf">this guide</a> for a walkthrough on adding these capabilities.</p>
 <p>Note that <em>unlike</em> with a ListView, we usually modify the items shown in a <code>RecyclerView</code> by modifying the data model (e.g., the array or ArrayList) directly. But we will need to <a href="https://guides.codepath.com/android/using-the-recyclerview#notifying-the-adapter">notify</a> the <code>RecyclerView</code>’s adapter of these changes by calling one of the various <code>.notify()</code> methods on the adapter (e.g., <code>adapter.notifyItemInserted(position)</code>). This will cause the adapter to “refresh” the display, and it will actually animate the changes to the list by default!</p>
-<p>Using a RecyclerView instead of a ListView also enables common user actions such as “drag-to-order” or “swipe-to-dismiss”. See <a href="https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf">this guide</a> for a walkthrough on adding these capabilities.</p>
 </div>
 <div id="cards" class="section level4 unnumbered">
 <h4>Cards</h4>
@@ -516,7 +523,7 @@ If you want to include a circular image in your card (or anywhere else in your a
 <h4>Floating Action Buttons (FAB)</h4>
 <p>While RecyclerViews and Cards are found in the <code>v7</code> support library, the most noticeable and interesting components come from the <a href="https://developer.android.com/training/material/design-library.html">Design Support Library</a>, which specifically includes components for supporting Material Design.</p>
 <ul>
-<li>This library should be includes in gradle as <code>com.android.support:design:26.1.0</code>, as in the above example.</li>
+<li>This library should be included in gradle as <code>com.android.support:design:27.1.1</code>, as in the above example.</li>
 </ul>
 <p>The most common element from this library is the <a href="https://developer.android.com/training/material/design-library.html#CreateFAB"><strong>Floating Action Button (FAB)</strong></a>. This is a circular button that “floats” above the content of the screen (at a higher elevation), and represents the <em>primary action</em> of the UI.</p>
 <ul>
@@ -538,18 +545,21 @@ If you want to include a circular image in your card (or anywhere else in your a
 <h4>Snackbars</h4>
 <p>The Design Support Library also includes an alternative to Toast messages called <a href="https://developer.android.com/training/snackbar/showing.html"><strong>Snackbars</strong></a>. This is a user-facing pop-up message that appears at the bottom of the screen (similar to a Toast).</p>
 <p>Snackbars are shown using a similar structure to Toasts:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">Snackbar snack = Snackbar.<span class="fu">make</span>(view, <span class="st">&quot;Let&#39;s go out to the lobby!&quot;</span>, Snackbar.<span class="fu">LENGTH_LONG</span>).<span class="fu">show</span>();</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="kw">val</span> <span class="va">snack</span> = Snackbar.make(view, <span class="st">&quot;Let&#39;s go out to the lobby!&quot;</span>, Snackbar.LENGTH_LONG).show();</code></pre></div>
 <ul>
-<li><p>Instead of calling the <code>Toast.makeText()</code> factory method, we call the <code>Snackbar.make()</code> factory method. The first parameter in this case needs to be a View that the Snackbar will be “attached” to (so shown with)—however, it doesn’t really matter which View is given, since the method will search up the view heirarchy until it gets to the root content view or a <code>CoordinatorLayout</code>.</p></li>
+<li><p>Instead of calling the <code>Toast.makeText()</code> factory method, we call the <code>Snackbar.make()</code> factory method. The first parameter in this case needs to be a View that the Snackbar will be “attached” to (so shown with)—however, it doesn’t really matter which View is given, since the method will search up the view hierarchy until it gets to the root content view or a special layout called a <code>CoordinatorLayout</code>.</p></li>
 <li><p>You’ll notice that the Snackbar overlays the content (including the FAB). This will be addressed below by introducing a <code>CoordinatorLayout</code>.</p></li>
 </ul>
-<p>Additionally, it is possible to give Snackbar’s their own <em>action</em> that the user can activate by clicking on the Snackbar. This allows the bar to, for example, show a delete confirmation but providing an “undo” action. The action is specified by calling the <code>.setAction()</code> method on the Snackbar, and passing in a title for the action as well as an <code>OnClickListener</code>:</p>
+<p>Additionally, it is possible to give Snackbars their own <em>action</em> that the user can activate by clicking on the Snackbar. This allows the bar to, for example, show a delete confirmation but providing an “undo” action. The action is specified by calling the <code>.setAction()</code> method on the Snackbar, and passing in a title for the action as well as an <code>OnClickListener</code>:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">mySnackbar.<span class="fu">setAction</span>(<span class="st">&quot;Click&quot;</span>, <span class="kw">new</span> <span class="bu">View</span>.<span class="fu">OnClickListener</span>() {
     <span class="at">@Override</span>
     <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onClick</span>(<span class="bu">View</span> view) {
         <span class="co">//...</span>
     }
 });</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin">snack.setAction(<span class="st">&quot;Click&quot;</span>) {
+    <span class="co">//...</span>
+};</code></pre></div>
 <ul>
 <li>For practice, make the Snackbar <code>.hide()</code> the FAB, but provide an “undo” action that will <code>.show()</code> it!</li>
 </ul>
@@ -578,7 +588,7 @@ If you want to include a circular image in your card (or anywhere else in your a
 <span class="kw">&lt;/android.support.design.widget.CoordinatorLayout&gt;</span></code></pre></div>
 <p>We will also need to move the FAB definition so that it is a <em>direct child</em> of the CoordinatorLayout. Once we have done so, we should be able to click the button and watch it move up to make room for the Snackbar!</p>
 <ul>
-<li>How this works is that the CoordinatorLayout allows you to give <a href="https://developer.android.com/reference/android/support/design/widget/CoordinatorLayout.Behavior.html"><strong>Behaviors</strong></a> to its child views; these Behaviors will then be executed when the state of the CoordinatorLayout (or its children) changes. For example, the built-in <code>FloatingActionButton.Behavior</code> defines how the button should move in response to it’s parent changing size, but Behaviors can also be defined in response to use interactions such as swipes or other gestures.</li>
+<li>How this works is that the CoordinatorLayout allows you to give <a href="https://developer.android.com/reference/android/support/design/widget/CoordinatorLayout.Behavior.html"><strong>Behaviors</strong></a> to its child views; these Behaviors will then be executed when the state of the CoordinatorLayout (or its children) changes. For example, the built-in <code>FloatingActionButton.Behavior</code> defines how the button should move in response to its parent changing size, but Behaviors can also be defined in response to use interactions such as swipes or other gestures.</li>
 </ul>
 <div id="scrolling-layouts" class="section level4 unnumbered">
 <h4>Scrolling Layouts</h4>
@@ -595,7 +605,7 @@ If you want to include a circular image in your card (or anywhere else in your a
 <p>The AppBarLayout works together with its child <a href="http://developer.android.com/reference/android/support/design/widget/CollapsingToolbarLayout.html"><code>CollapsingToolbarLayout</code></a>, which does just what it says on the tin. It shows a larger title, but then shrinks down in response to scrolling. Here the <code>scrollFlags</code> are declared: <code>scroll|exitUntilCollapse</code> indicates two flags (combined with a bitwise OR <code>|</code>): that the content should scroll, and that it should shrink to its minimum height until it collapses.</p>
 <p>The Toolbar itself is finally defined as a child of <code>CollapsingToolbarLayout</code>, though other children could be added here as well. For example, an <code>ImageView</code> could be included as a child of the CollapsingToolbarLayout in order to create a collapsing image!</p>
 <p>(Check the documentation for details about all of the specific attributes).</p></li>
-<li><p>After the collapsing AppBar, the <code>CoordinatorLayout</code> includes a <a href="https://developer.android.com/reference/android/support/v4/widget/NestedScrollView.html"><code>NestedScrollView</code></a> (declared in a separate file for organization). This is a scrollable view (similar to what is used in a ListView), but both include and be included within scrollable layouts.</p>
+<li><p>After the collapsing AppBar, the <code>CoordinatorLayout</code> includes a <a href="https://developer.android.com/reference/android/support/v4/widget/NestedScrollView.html"><code>NestedScrollView</code></a> (declared in a separate file for organization). This is a scrollable view (similar to what is used in a ListView), but can both include and be included within scrollable layouts.</p>
 <ul>
 <li>Notice that this element includes an <code>app:layout_behavior</code> attribute, which refers to a particular class: <code>AppBarLayout$ScrollingViewBehavior</code> (the <code>$</code> is used to refer to a compiled nested class). This Behavior will “automatically scroll any AppBarLayout siblings”, allowing the scrolling of the page content to <em>also</em> cuase the AppBarLayout to scroll!</li>
 </ul></li>
@@ -691,7 +701,7 @@ ActivityOptions options = ActivityOptions.<span class="fu">makeSceneTransitionAn
 
 <span class="co">// start the new activity</span>
 <span class="fu">startActivity</span>(<span class="kw">new</span> <span class="fu">Intent</span>(MainActivity.<span class="fu">this</span>, ScrollingActivity.<span class="fu">class</span>), options.<span class="fu">toBundle</span>());</code></pre></div>
-<p>This should cause the FAB to “morph” between Activties (and even morph back when you hit the “back” button)!</p>
+<p>This should cause the FAB to “morph” between Activities (and even morph back when you hit the “back” button)!</p>
 <p>For more about what makes effective animation, see the <a href="https://material.io/guidelines/motion/material-motion.html">Material deisgn guidelines</a>.</p>
 <p class="alert alert-warning">
 I find Activity Transitions to be slick, but finicky: getting them to work properly takes a lot of effort and practice. Most professional apps that utilize Material Design use extensive custom animations for generating these transitions. For examples of more complex Material Design animations and patterns, check out sample applications such as <a href="https://github.com/chrisbanes/cheesesquare">cheesesquare</a> or <a href="https://github.com/nickbutcher/plaid">plaid</a>.
@@ -709,6 +719,7 @@ I find Activity Transitions to be slick, but finicky: getting them to work prope
 <li><a href="http://saulmm.github.io/mastering-coordinator">Mastering the Coordinator Layout (Blog)</a> a great set of examples of how to use CoordinatorLayout.</li>
 <li><p><a href="http://www.androidauthority.com/using-coordinatorlayout-android-apps-703720/">Using CoordinatorLayout in Android Apps (Blog)</a> another good explanation of CoordinatorLayout</p></li>
 <li><a href="https://lab.getbase.com/introduction-to-coordinator-layout-on-android/" class="uri">https://lab.getbase.com/introduction-to-coordinator-layout-on-android/</a></li>
+<li><p><a href="https://medium.com/@andkulikov/animate-all-the-things-transitions-in-android-914af5477d50" class="uri">https://medium.com/@andkulikov/animate-all-the-things-transitions-in-android-914af5477d50</a></p></li>
 </ul>
 </div>
 
@@ -717,8 +728,9 @@ I find Activity Transitions to be slick, but finicky: getting them to work prope
 <div class="footnotes">
 <hr />
 <ol start="14">
-<li id="fn14"><p><a href="https://material.io/color/#!/" class="uri">https://material.io/color/#!/</a><a href="material-design.html#fnref14">↩</a></p></li>
-<li id="fn15"><p><a href="https://developer.android.com/training/material/lists-cards.html#RecyclerView" class="uri">https://developer.android.com/training/material/lists-cards.html#RecyclerView</a><a href="material-design.html#fnref15">↩</a></p></li>
+<li id="fn14"><p><a href="http://developer.android.com/reference/android/support/v7/app/ActionBar.html" class="uri">http://developer.android.com/reference/android/support/v7/app/ActionBar.html</a><a href="material-design.html#fnref14">↩</a></p></li>
+<li id="fn15"><p><a href="https://material.io/color/#!/" class="uri">https://material.io/color/#!/</a><a href="material-design.html#fnref15">↩</a></p></li>
+<li id="fn16"><p><a href="https://developer.android.com/guide/topics/ui/layout/recyclerview" class="uri">https://developer.android.com/guide/topics/ui/layout/recyclerview</a><a href="material-design.html#fnref16">↩</a></p></li>
 </ol>
 </div>
             </section>
