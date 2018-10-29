@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2018-10-24">
+<meta name="date" content="2018-10-29">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -198,9 +198,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="fragments.html"><a href="fragments.html#inter-fragment-communication"><i class="fa fa-check"></i>Inter-Fragment Communication</a></li>
 <li class="chapter" data-level="" data-path="fragments.html"><a href="fragments.html#the-back-stack"><i class="fa fa-check"></i>The Back Stack</a></li>
 </ul></li>
-<li class="chapter" data-level="6.3" data-path="fragments.html"><a href="fragments.html#dialogs"><i class="fa fa-check"></i><b>6.3</b> Dialogs</a><ul>
-<li class="chapter" data-level="" data-path="fragments.html"><a href="fragments.html#dialogfragments"><i class="fa fa-check"></i>DialogFragments</a></li>
-</ul></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="intents.html"><a href="intents.html"><i class="fa fa-check"></i><b>7</b> Intents</a><ul>
 <li class="chapter" data-level="7.1" data-path="intents.html"><a href="intents.html#intents-for-another-activity-explicit"><i class="fa fa-check"></i><b>7.1</b> Intents for Another Activity (Explicit)</a><ul>
@@ -217,10 +214,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="7.7" data-path="intents.html"><a href="intents.html#an-intent-example-sms"><i class="fa fa-check"></i><b>7.7</b> An Intent Example: SMS</a></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="notifications-settings.html"><a href="notifications-settings.html"><i class="fa fa-check"></i><b>8</b> Notifications &amp; Settings</a><ul>
-<li class="chapter" data-level="8.1" data-path="notifications-settings.html"><a href="notifications-settings.html#dialogs-1"><i class="fa fa-check"></i><b>8.1</b> Dialogs</a><ul>
-<li class="chapter" data-level="" data-path="notifications-settings.html"><a href="notifications-settings.html#dialogfragments-1"><i class="fa fa-check"></i>DialogFragments</a></li>
+<li class="chapter" data-level="8.1" data-path="notifications-settings.html"><a href="notifications-settings.html#dialogs"><i class="fa fa-check"></i><b>8.1</b> Dialogs</a><ul>
+<li class="chapter" data-level="" data-path="notifications-settings.html"><a href="notifications-settings.html#dialogfragments"><i class="fa fa-check"></i>DialogFragments</a></li>
 </ul></li>
-<li class="chapter" data-level="8.2" data-path="notifications-settings.html"><a href="notifications-settings.html#notifications"><i class="fa fa-check"></i><b>8.2</b> Notifications</a></li>
+<li class="chapter" data-level="8.2" data-path="notifications-settings.html"><a href="notifications-settings.html#notifications"><i class="fa fa-check"></i><b>8.2</b> Notifications</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="notifications-settings.html"><a href="notifications-settings.html#tap-actions"><i class="fa fa-check"></i><b>8.2.1</b> Tap Actions</a></li>
+</ul></li>
 <li class="chapter" data-level="8.3" data-path="notifications-settings.html"><a href="notifications-settings.html#settings"><i class="fa fa-check"></i><b>8.3</b> Settings</a><ul>
 <li class="chapter" data-level="" data-path="notifications-settings.html"><a href="notifications-settings.html#sharedpreferences"><i class="fa fa-check"></i>SharedPreferences</a></li>
 <li class="chapter" data-level="" data-path="notifications-settings.html"><a href="notifications-settings.html#preference-settings"><i class="fa fa-check"></i>Preference Settings</a></li>
@@ -396,7 +395,7 @@ While you don’t need to know SQL to utilize a built-in database like the User 
 <p>To do this, we’ll need to request permission to access the database, just as we asked permission to access the Internet. Include the following in the <em>Manifest</em>:</p>
 <div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;uses-permission</span><span class="ot"> android:name=</span><span class="st">&quot;android.permission.READ_USER_DICTIONARY&quot;</span><span class="kw">/&gt;</span></code></pre></div>
 <p>Although the words are stored in a database, we don’t know the <em>exact</em> format of this database (e.g., the exact table or column names, or even whether it is an SQL database or just a <code>.csv</code> file!). We want to avoid having to write code that only works with a specific format, especially as the words may be stored in different kinds of databases on different devices or across different versions of Android. (The Android framework does include support for working directly with a local <code>SQLite</code> database, as discussed in the next chapter).</p>
-<p>In order to avoid relying on the specific format of how some data is stored, Android offers an <strong><em>abstraction</em></strong> in the form of a <a href="https://developer.android.com/guide/topics/providers/content-providers.html"><strong>Content Provider</strong></a><a href="#fn35" class="footnoteRef" id="fnref35"><sup>35</sup></a>. A Content Provider offers an interface to interact with structured data, whether that data is stored in a database, in a file, in <em>multiple</em> files, online, or somewhere else. You can thus think of “a Content Provider” as meaning “a data source” (e.g., the source/provider of content)!</p>
+<p>In order to avoid relying on the specific format of how some data is stored, Android offers an <strong><em>abstraction</em></strong> in the form of a <a href="https://developer.android.com/guide/topics/providers/content-providers.html"><strong>Content Provider</strong></a><a href="#fn33" class="footnoteRef" id="fnref33"><sup>33</sup></a>. A Content Provider offers an interface to interact with structured data, whether that data is stored in a database, in a file, in <em>multiple</em> files, online, or somewhere else. You can thus think of “a Content Provider” as meaning “a data source” (e.g., the source/provider of content)!</p>
 <ul>
 <li>It is possible to create your own Content Providers (described in a later chapter), but this lecture focuses purely on <em>utilizing</em> existing Providers.</li>
 </ul>
@@ -518,8 +517,8 @@ newValues.<span class="fu">put</span>(UserDictionary.<span class="fu">Words</spa
 </div>
 <div class="footnotes">
 <hr />
-<ol start="35">
-<li id="fn35"><p><a href="https://developer.android.com/guide/topics/providers/content-providers.html" class="uri">https://developer.android.com/guide/topics/providers/content-providers.html</a><a href="loaders.html#fnref35">↩</a></p></li>
+<ol start="33">
+<li id="fn33"><p><a href="https://developer.android.com/guide/topics/providers/content-providers.html" class="uri">https://developer.android.com/guide/topics/providers/content-providers.html</a><a href="loaders.html#fnref33">↩</a></p></li>
 </ol>
 </div>
             </section>

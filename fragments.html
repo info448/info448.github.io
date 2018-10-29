@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2018-10-24">
+<meta name="date" content="2018-10-29">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -198,9 +198,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="fragments.html"><a href="fragments.html#inter-fragment-communication"><i class="fa fa-check"></i>Inter-Fragment Communication</a></li>
 <li class="chapter" data-level="" data-path="fragments.html"><a href="fragments.html#the-back-stack"><i class="fa fa-check"></i>The Back Stack</a></li>
 </ul></li>
-<li class="chapter" data-level="6.3" data-path="fragments.html"><a href="fragments.html#dialogs"><i class="fa fa-check"></i><b>6.3</b> Dialogs</a><ul>
-<li class="chapter" data-level="" data-path="fragments.html"><a href="fragments.html#dialogfragments"><i class="fa fa-check"></i>DialogFragments</a></li>
-</ul></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="intents.html"><a href="intents.html"><i class="fa fa-check"></i><b>7</b> Intents</a><ul>
 <li class="chapter" data-level="7.1" data-path="intents.html"><a href="intents.html#intents-for-another-activity-explicit"><i class="fa fa-check"></i><b>7.1</b> Intents for Another Activity (Explicit)</a><ul>
@@ -217,10 +214,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="7.7" data-path="intents.html"><a href="intents.html#an-intent-example-sms"><i class="fa fa-check"></i><b>7.7</b> An Intent Example: SMS</a></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="notifications-settings.html"><a href="notifications-settings.html"><i class="fa fa-check"></i><b>8</b> Notifications &amp; Settings</a><ul>
-<li class="chapter" data-level="8.1" data-path="notifications-settings.html"><a href="notifications-settings.html#dialogs-1"><i class="fa fa-check"></i><b>8.1</b> Dialogs</a><ul>
-<li class="chapter" data-level="" data-path="notifications-settings.html"><a href="notifications-settings.html#dialogfragments-1"><i class="fa fa-check"></i>DialogFragments</a></li>
+<li class="chapter" data-level="8.1" data-path="notifications-settings.html"><a href="notifications-settings.html#dialogs"><i class="fa fa-check"></i><b>8.1</b> Dialogs</a><ul>
+<li class="chapter" data-level="" data-path="notifications-settings.html"><a href="notifications-settings.html#dialogfragments"><i class="fa fa-check"></i>DialogFragments</a></li>
 </ul></li>
-<li class="chapter" data-level="8.2" data-path="notifications-settings.html"><a href="notifications-settings.html#notifications"><i class="fa fa-check"></i><b>8.2</b> Notifications</a></li>
+<li class="chapter" data-level="8.2" data-path="notifications-settings.html"><a href="notifications-settings.html#notifications"><i class="fa fa-check"></i><b>8.2</b> Notifications</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="notifications-settings.html"><a href="notifications-settings.html#tap-actions"><i class="fa fa-check"></i><b>8.2.1</b> Tap Actions</a></li>
+</ul></li>
 <li class="chapter" data-level="8.3" data-path="notifications-settings.html"><a href="notifications-settings.html#settings"><i class="fa fa-check"></i><b>8.3</b> Settings</a><ul>
 <li class="chapter" data-level="" data-path="notifications-settings.html"><a href="notifications-settings.html#sharedpreferences"><i class="fa fa-check"></i>SharedPreferences</a></li>
 <li class="chapter" data-level="" data-path="notifications-settings.html"><a href="notifications-settings.html#preference-settings"><i class="fa fa-check"></i>Preference Settings</a></li>
@@ -618,98 +617,6 @@ Bundles are only supposed to store small amounts of information (a few variables
 <ul>
 <li><code>FragmentManager</code> also includes numerous methods for manually manipulating the back-stack (e.g., “popping” off transactions) if you want to include custom navigation elements such as extra “back” buttons.</li>
 </ul>
-</div>
-</div>
-<div id="dialogs" class="section level2">
-<h2><span class="header-section-number">6.3</span> Dialogs</h2>
-<p>We have previously provided feedback to users via simple pop-ups such as <a href="https://developer.android.com/guide/topics/ui/notifiers/toasts.html">Toasts</a> or <a href="https://developer.android.com/training/snackbar/showing.html">Snackbars</a>. However, sometimes you would like to show a more complex “pop-up” View—perhaps one that requires additional interaction.</p>
-<p>A <a href="https://developer.android.com/guide/topics/ui/dialogs.html"><strong><em>Dialog</em></strong></a><a href="#fn21" class="footnoteRef" id="fnref21"><sup>21</sup></a> is a “pop-up” <a href="https://en.wikipedia.org/wiki/Modal_window">modal</a> (a view which doesn’t fill the screen) that either asks the user to make a decision or provides some additional information. At it’s most basic, Dialogs are similar to the <code>window.alert()</code> function and its variants used in JavaScript.</p>
-<p>There is a base <code>Dialog</code> class, but almost always we use a pre-defined subclass instead (similar to how we’ve use <code>AppCompatActivity</code>). <a href="https://developer.android.com/reference/android/support/v7/app/AlertDialog.html"><code>AlertDialog</code></a><a href="#fn22" class="footnoteRef" id="fnref22"><sup>22</sup></a> is the most common version: a simple message with buttons you can respond with (confirm, cancel, etc).</p>
-<p>We don’t actually instantiate an <code>AlertDialog</code> directly (in fact, its constructors are <code>protected</code> so inaccessible to us). Instead we use a helper <em>factory</em> class called an <a href="https://developer.android.com/reference/android/support/v7/app/AlertDialog.Builder.html"><code>AlertDialog.Builder</code></a>. There are a number of steps to use a builder to create a Dialog:</p>
-<ol style="list-style-type: decimal">
-<li><p>Instantiate a new builder for this particular dialog. The constructor takes in a <code>Context</code> under which to create the Dialog. Note that once the builder is initialized, you can create and recreate the same dialog with a single method call—that’s the benefits of using a factory.</p></li>
-<li><p>Call “setter” methods on the builder in order to specify the title, message, etc. for the dialog that will appear. This can be hard-coded text or a reference to an XML String resource (as a user-facing String, the later is more appropriate for published applications). Each setter method will return a reference to the builder, making it easy to chain them.</p></li>
-<li><p>Use appropriate setter methods to specify callbacks (via a <code>DialogInterface.OnClickListener</code>) for individual buttons. Note that the “positive” button normally has the text <code>&quot;OK&quot;</code>, but this can be customized.</p></li>
-<li><p>Finally, actually instantiate the <code>AlertDialog</code> with the <code>builder.create()</code> method, using the <strong><code>show()</code></strong> method to make the dialog appear on the screen!</p></li>
-</ol>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
-AlertDialog.<span class="fu">Builder</span> builder = <span class="kw">new</span> AlertDialog.<span class="fu">Builder</span>(<span class="kw">this</span>);
-builder.<span class="fu">setTitle</span>(<span class="st">&quot;Alert!&quot;</span>)
-       .<span class="fu">setMessage</span>(<span class="st">&quot;Danger Will Robinson!&quot;</span>);
-builder.<span class="fu">setPositiveButton</span>(<span class="st">&quot;I see it!&quot;</span>, <span class="kw">new</span> DialogInterface.<span class="fu">OnClickListener</span>() {
-  <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onClick</span>(DialogInterface dialog, <span class="dt">int</span> id) {
-    <span class="co">// User clicked OK button</span>
-  }
-});
-
-AlertDialog dialog = builder.<span class="fu">create</span>();
-dialog.<span class="fu">show</span>();</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
-<span class="kw">val</span> <span class="va">builder</span> = AlertDialog.Builder(<span class="kw">this</span>)
-builder.apply {
-    setTitle(<span class="st">&quot;Alert!&quot;</span>)
-    setMessage(<span class="st">&quot;Danger Will Robinson!&quot;</span>)
-    setPositiveButton(<span class="st">&quot;I see it!&quot;</span>) { dialog, id -&gt; 
-        Log.v(TAG, <span class="st">&quot;You clicked okay! Good times :)&quot;</span>) 
-    }
-}</code></pre></div>
-<p class="alert alert-info">
-An important part of learning to develop Android applications is being able to read the API to discover effective options. For example, can you read the <a href="https://developer.android.com/reference/android/support/v7/app/AlertDialog.Builder.html">AlertDialog.Builder API</a> and determine how to add a “cancel” button to the alert?
-</p>
-<p>While <code>AlertDialog</code> is the most common Dialog, Android supports other subclasses as well. For example, <a href="https://developer.android.com/reference/android/app/DatePickerDialog.html"><code>DatePickerDialog</code></a> and <a href="https://developer.android.com/reference/android/app/TimePickerDialog.html"><code>TimePickerDialog</code></a> provide pre-defined user interfaces for picking a date or a time respectively. See the <a href="https://developer.android.com/guide/topics/ui/controls/pickers.html">Pickers guide</a> for details about how to utilize these.</p>
-<div id="dialogfragments" class="section level3 unnumbered">
-<h3>DialogFragments</h3>
-<p>The process described above will create and show a Dialog, but that dialog has a few problems in how it interacts with the rest of the Android framework—namely with the lifecycle of the Activity in which it is embedded.</p>
-<p>For example, if the device changes configurations (e.g., is rotated from portrait to landscape) then the Activity is destroyed and re-created (it’s <code>onCreate()</code> method will be called again). But if this happens while a Dialog is being shown, then a <code>android.view.WindowLeaked</code> error will occur and the Dialog is lost!</p>
-<p>To avoid these problems, we need to have a way of giving that Dialog its own lifecycle which can interact with the the Activity’s lifecycle… sort of like making it a <em>modular</em> piece of an Activity… that’s right, we need to make it a Fragment! Specifically, we will use a subclass of Fragment called <a href="http://developer.android.com/guide/topics/ui/dialogs.html#DialogFragment"><code>DialogFragment</code></a>, which is a Fragment that displays as a modal dialog floating above the Activity (no extra work needed).</p>
-<p>Just like with the previous Fragment examples, we’ll need to create our own subclass of <code>DialogFragment</code>. It’s often easiest to make this a <em>nested class</em> if the Dialog won’t be doing a lot of work (e.g., shows a simple confirmation).</p>
-<p>Rather than specifying a Fragment layout through <code>onCreateView()</code>, we can instead override the <code>onCreateDialog()</code> callback to specify a <code>Dialog</code> object that will provide the view hierarchy for the Fragment. This Dialog can be created with the <code>AlertDialog.Builder</code> class as before!</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
-<span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> HelloDialogFragment <span class="kw">extends</span> DialogFragment {
-
-    <span class="kw">public</span> <span class="dt">static</span> HelloDialogFragment <span class="fu">newInstance</span>() {
-        Bundle args = <span class="kw">new</span> <span class="fu">Bundle</span>();
-        HelloDialogFragment fragment = <span class="kw">new</span> <span class="fu">HelloDialogFragment</span>();
-        fragment.<span class="fu">setArguments</span>(args);
-        <span class="kw">return</span> fragment;
-    }
-
-    <span class="kw">public</span> <span class="bu">Dialog</span> <span class="fu">onCreateDialog</span>(Bundle savedInstanceState) {
-        AlertDialog.<span class="fu">Builder</span> builder = <span class="kw">new</span> AlertDialog.<span class="fu">Builder</span>(<span class="fu">getActivity</span>());
-        <span class="co">//...</span>
-        AlertDialog dialog = builder.<span class="fu">create</span>();
-        <span class="kw">return</span> dialog;
-    }
-}</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
-<span class="kw">class</span> HelloDialogFragment : <span class="dt">DialogFragment</span>() {
-    <span class="kw">companion</span> <span class="kw">object</span> {
-        <span class="kw">fun</span> <span class="fu">newInstance</span>(): <span class="dt">HelloDialogFragment</span> {
-            <span class="kw">val</span> <span class="va">args</span> = Bundle()
-            <span class="kw">val</span> <span class="va">fragment</span> = HelloDialogFragment()
-            fragment.arguments = args
-            <span class="kw">return</span> fragment
-        }
-    }
-
-    <span class="kw">override</span> <span class="kw">fun</span> <span class="fu">onCreateDialog</span>(<span class="va">savedInstanceState</span>: <span class="dt">Bundle?</span>): <span class="dt">Dialog</span> {
-        <span class="kw">return</span> activity?.let { <span class="co">//confirm Activity isn&#39;t null</span>
-            <span class="kw">val</span> <span class="va">builder</span> = AlertDialog.Builder(it)
-            builder.apply {
-                <span class="co">//...</span>
-            }
-            builder.create()
-        } ?: <span class="kw">throw</span> IllegalStateException(<span class="st">&quot;Activity cannot be null&quot;</span>)
-    }
-}</code></pre></div>
-<p>Finally, we can actually show this <code>DialogFragment</code> by instantiating it (remember to use a <code>newInstance()</code> factory method!) and then calling the <code>show()</code> method on it to make it show as a Dialog. The <code>show()</code> method takes in a <code>FragmentManager</code> used to manage this transaction. By using a DialogFragment, it is possible to change the device configuration (rotate the phone) and the Dialog is retained.</p>
-<p>Here’s the other neat trick: a <code>DialogFragment</code> is just a <code>Fragment</code>. That means we can use it <em>anywhere</em> we normally used Fragments… including embedding them into layouts! For example if you made the <code>DetailsFragment</code> subclass <code>DialogFragment</code> instead of <code>Fragment</code>, it would be able to be used in the exact same as before. It’s still a Fragment, just with extra features—one of which is a <code>show()</code> method that will show it as a Dialog!</p>
-<ul>
-<li>Use <code>setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog)</code> to make the Fragment look a little more like a dialog.</li>
-</ul>
-<p class="alert alert-info">
-The truth is that Dialogs are not very commonly used in Android (compare to other UI systems). Apps are more likely to just dynamically change the Fragment or Activity being shown, rather than interrupt the user flow by creating a pop-up modal. And 80% of the Dialogs that <em>are</em> used are AlertDialogs. Nevertheless, it is worth being familiar with this process and the patterns it draws upon!
-</p>
 
 </div>
 </div>
@@ -721,8 +628,6 @@ The truth is that Dialogs are not very commonly used in Android (compare to othe
 <li id="fn18"><p><a href="https://developer.android.com/images/fragment_lifecycle.png" class="uri">https://developer.android.com/images/fragment_lifecycle.png</a><a href="fragments.html#fnref18">↩</a></p></li>
 <li id="fn19"><p><a href="https://developer.android.com/reference/android/support/v4/app/FragmentTransaction.html" class="uri">https://developer.android.com/reference/android/support/v4/app/FragmentTransaction.html</a><a href="fragments.html#fnref19">↩</a></p></li>
 <li id="fn20"><p><a href="http://developer.android.com/images/fundamentals/diagram_backstack.png" class="uri">http://developer.android.com/images/fundamentals/diagram_backstack.png</a><a href="fragments.html#fnref20">↩</a></p></li>
-<li id="fn21"><p><a href="https://developer.android.com/guide/topics/ui/dialogs.html" class="uri">https://developer.android.com/guide/topics/ui/dialogs.html</a><a href="fragments.html#fnref21">↩</a></p></li>
-<li id="fn22"><p><a href="https://developer.android.com/reference/android/support/v7/app/AlertDialog.html" class="uri">https://developer.android.com/reference/android/support/v7/app/AlertDialog.html</a><a href="fragments.html#fnref22">↩</a></p></li>
 </ol>
 </div>
             </section>
