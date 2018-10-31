@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2018-10-29">
+<meta name="date" content="2018-10-31">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -236,10 +236,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.2" data-path="files-and-permissions.html"><a href="files-and-permissions.html#permissions"><i class="fa fa-check"></i><b>10.2</b> Permissions</a></li>
 <li class="chapter" data-level="10.3" data-path="files-and-permissions.html"><a href="files-and-permissions.html#external-storage"><i class="fa fa-check"></i><b>10.3</b> External Storage</a></li>
 <li class="chapter" data-level="10.4" data-path="files-and-permissions.html"><a href="files-and-permissions.html#internal-storage-cache"><i class="fa fa-check"></i><b>10.4</b> Internal Storage &amp; Cache</a></li>
-<li class="chapter" data-level="10.5" data-path="files-and-permissions.html"><a href="files-and-permissions.html#example-saving-pictures"><i class="fa fa-check"></i><b>10.5</b> Example: Saving Pictures</a></li>
-<li class="chapter" data-level="10.6" data-path="files-and-permissions.html"><a href="files-and-permissions.html#sharing-files"><i class="fa fa-check"></i><b>10.6</b> Sharing Files</a><ul>
-<li class="chapter" data-level="" data-path="files-and-permissions.html"><a href="files-and-permissions.html#bonus-sharing-with-a-fileprovider"><i class="fa fa-check"></i>Bonus: Sharing with a FileProvider</a></li>
+<li class="chapter" data-level="10.5" data-path="files-and-permissions.html"><a href="files-and-permissions.html#example-saving-pictures"><i class="fa fa-check"></i><b>10.5</b> Example: Saving Pictures</a><ul>
+<li class="chapter" data-level="10.5.1" data-path="files-and-permissions.html"><a href="files-and-permissions.html#fileproviders"><i class="fa fa-check"></i><b>10.5.1</b> FileProviders</a></li>
 </ul></li>
+<li class="chapter" data-level="10.6" data-path="files-and-permissions.html"><a href="files-and-permissions.html#sharing-files"><i class="fa fa-check"></i><b>10.6</b> Sharing Files</a></li>
 </ul></li>
 <li class="chapter" data-level="11" data-path="databases.html"><a href="databases.html"><i class="fa fa-check"></i><b>11</b> Providers and Databases</a><ul>
 <li class="chapter" data-level="11.1" data-path="databases.html"><a href="databases.html#review-providers-and-loaders"><i class="fa fa-check"></i><b>11.1</b> Review: Providers and Loaders</a></li>
@@ -408,12 +408,17 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 <li>In particular, this lecture will walk through implementing an application that will save whatever the user types into an text field to a file.</li>
 </ul>
 <p>Because a device’s External storage may be on removable media, in order to interact with it in any way we first need to check whether it is available (e.g., that the SD card is mounted). This can be done with the following <a href="https://developer.android.com/guide/topics/data/data-storage.html#MediaAvail">check</a> (written as a helper method so it can be reused):</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">static</span> <span class="dt">boolean</span> <span class="fu">isExternalStorageWritable</span>() {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+<span class="kw">public</span> <span class="dt">static</span> <span class="dt">boolean</span> <span class="fu">isExternalStorageWritable</span>() {
   <span class="bu">String</span> state = <span class="bu">Environment</span>.<span class="fu">getExternalStorageState</span>();
   <span class="kw">if</span> (<span class="bu">Environment</span>.<span class="fu">MEDIA_MOUNTED</span>.<span class="fu">equals</span>(state)) {
     <span class="kw">return</span> <span class="kw">true</span>;
   }
   <span class="kw">return</span> <span class="kw">false</span>;
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">fun</span> <span class="fu">isExternalStorageWritable</span>(): <span class="dt">Boolean</span> {
+    <span class="kw">return</span> Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
 }</code></pre></div>
 </div>
 <div id="permissions" class="section level2">
@@ -440,17 +445,24 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 </ul>
 <p>First we <em>still</em> need to request permission in the <code>Manifest</code>; if we haven’t announced that we might ask for permission, we won’t be allowed to ask for it in the future. In particular, saving files to External storage requires <code>android.permission.WRITE_EXTERNAL_STORAGE</code> permission (which will also grant us <code>READ_EXTERNAL_STORAGE</code> access).</p>
 <p>Before we perform a dangerous action, we can check that we currently have permission:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="dt">int</span> permissionCheck = ContextCompat.<span class="fu">checkSelfPermission</span>(activity, <span class="bu">Manifest</span>.<span class="fu">permission</span>.<span class="fu">PERMISSION_NAME</span>);</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+<span class="dt">int</span> permissionCheck = ContextCompat.<span class="fu">checkSelfPermission</span>(activity, <span class="bu">Manifest</span>.<span class="fu">permission</span>.<span class="fu">PERMISSION_NAME</span>);</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">val</span> <span class="va">permissionCheck</span> = ContextCompat.checkSelfPermission(<span class="kw">this</span>, Manifest.permission.PERMISSION_NAME)</code></pre></div>
 <ul>
 <li>This function basically “looks up” whether the app has <em>currently</em> been granted a particular permission or not. It will return either <code>PackageManager.PERMISSION_GRANTED</code> or <code>PackageManager.PERMISSION_DENIED</code>.</li>
 </ul>
 <p>If permission has been granted, great! We can go about our business (e.g., saving a file to external storage). But if permission has NOT been explicitly granted (at runtime), then we have to ask for it. We do this by calling:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ActivityCompat.<span class="fu">requestPermissions</span>(activity, <span class="kw">new</span> <span class="bu">String</span>[]{<span class="bu">Manifest</span>.<span class="fu">permission</span>.<span class="fu">PERMISSION_NAME</span>}, REQUEST_CODE);</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+ActivityCompat.<span class="fu">requestPermissions</span>(activity, <span class="kw">new</span> <span class="bu">String</span>[]{<span class="bu">Manifest</span>.<span class="fu">permission</span>.<span class="fu">PERMISSION_NAME</span>}, REQUEST_CODE);</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.PERMISSION_NAME), REQUEST_CODE)</code></pre></div>
 <ul>
 <li>This method takes a Context and an <em>array</em> of permissions that we need access to (in case we need more than one). We also provide a request ID code (an <code>int</code>), which we can use to identify that particular request for permission in a callback that will be executed when the user chooses whether to give us access or not. This is the same pattern as when we sent an Intent for a <em>result</em>; asking for permission is conceptually like sending an Intent to the permission system!</li>
 </ul>
 <p>We can then provide the callback that will be executed when the user decides whether to grant us permission or not:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">onRequestPermissionsResult</span>(<span class="dt">int</span> requestCode, <span class="bu">String</span> permissions[], <span class="dt">int</span>[] grantResults) {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+<span class="kw">public</span> <span class="dt">void</span> <span class="fu">onRequestPermissionsResult</span>(<span class="dt">int</span> requestCode, <span class="bu">String</span> permissions[], <span class="dt">int</span>[] grantResults) {
   <span class="kw">switch</span> (requestCode) {
     <span class="kw">case</span> REQUEST_CODE:
       <span class="kw">if</span> (grantResults.<span class="fu">length</span> &gt; <span class="dv">0</span> &amp;&amp; grantResults[<span class="dv">0</span>] == PackageManager.<span class="fu">PERMISSION_GRANTED</span>) {
@@ -459,6 +471,17 @@ This lecture references code found at <a href="https://github.com/info448/lectur
     <span class="kw">default</span>:
         <span class="kw">super</span>.<span class="fu">onRequestPermissionsResult</span>(requestCode, permissions, grantResults);
   }
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">override</span> <span class="kw">fun</span> <span class="fu">onRequestPermissionsResult</span>(<span class="va">requestCode</span>: <span class="dt">Int</span>, <span class="va">permissions</span>: <span class="dt">Array</span>&lt;<span class="va">String</span>&gt;, <span class="va">grantResults</span>: <span class="dt">IntArray</span>) {
+    <span class="cf">when</span> (requestCode) {
+        REQUEST_CODE -&gt; {
+            <span class="cf">if</span> (grantResults.size &gt; <span class="dv">0</span> &amp;&amp; grantResults[<span class="dv">0</span>] == PackageManager.PERMISSION_GRANTED) {
+                <span class="co">//have permission! Do stuff!</span>
+            }
+        }
+        <span class="cf">else</span> -&gt; <span class="kw">super</span>.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
 }</code></pre></div>
 <p>We check which request we’re hearing the results for, what permissions were granted (if any—the user can piece-wise grant permissions!), and then we can react if everything is good… like by finally saving our file!</p>
 <ul>
@@ -478,7 +501,7 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 <div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;uses-permission</span><span class="ot"> android:name=</span><span class="st">&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot;</span><span class="ot"> android:maxSdkVersion=</span><span class="st">&quot;18&quot;</span> <span class="kw">/&gt;</span></code></pre></div></li>
 </ul>
 <p class="alert alert-info">
-We can actually look at the emulator’s file-system and see our files be created using <code>adb</code>. Connect to the emulator from the terminal using <code>adb -s emulator-5554 shell</code> (note: <code>adb</code> needs to be on your PATH). <strong>Public</strong> external files can usually be found in <code>/storage/sdcard/Folder</code>, while <strong>private</strong> external files can be found in <code>/storage/sdcard/Android/data/package.name/files</code> (these paths may vary on different devices).
+We can actually look at the emulator’s file-system and see our files be created using <code>adb</code>. Connect to the emulator from the terminal using <code>adb -s emulator-5554 shell</code> (note: <code>adb</code> needs to be on your PATH). <strong>Public</strong> external files can usually be found in <code>/storage/emulated/0/Folder</code> (or <code>/storage/sdcard/Folder</code>), while <strong>private</strong> external files can be found in <code>/storage/emulated/0/Android/data/package.name/files</code> (these paths may vary on different devices).
 </p>
 <p>Once we’ve opened up the file, we can write content to it by using the same IO classes we’ve used in Java:</p>
 <ul>
@@ -486,7 +509,8 @@ We can actually look at the emulator’s file-system and see our files be create
 <li><p>However, we can also use the same <em>decorators</em> as in Java (e.g., <code>BufferedReader</code>, <code>PrintWriter</code>, etc.) if we want those capabilities; it makes reading and writing to file a little easier.</p></li>
 <li><p>In either case, <strong>remember to <code>.close()</code> the stream when done</strong> (to avoid memory leaks)!</p></li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//writing</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+<span class="co">//writing</span>
 <span class="kw">try</span> {
     <span class="co">//saving in public Documents directory</span>
     <span class="bu">File</span> dir = <span class="fu">getExternalStoragePublicDirectory</span>(<span class="bu">Environment</span>.<span class="fu">DIRECTORY_DOCUMENTS</span>);
@@ -520,6 +544,42 @@ We can actually look at the emulator’s file-system and see our files be create
     reader.<span class="fu">close</span>();
 } <span class="kw">catch</span> (<span class="bu">IOException</span> ioe) {
     Log.<span class="fu">d</span>(TAG, Log.<span class="fu">getStackTraceString</span>(ioe));
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="co">//writing</span>
+<span class="cf">try</span> {
+    <span class="kw">val</span> <span class="va">dir</span> = getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+    <span class="cf">if</span> (!dir.exists()) { dir.mkdirs() } <span class="co">//make dir if doesn&#39;t otherwise exist (pre-19)</span>
+    <span class="kw">val</span> <span class="va">file</span> = File(dir, FILE_NAME)
+    Log.v(TAG, <span class="st">&quot;Saving to  &quot;</span> + file.absolutePath)
+
+    <span class="kw">val</span> <span class="va">out</span> = PrintWriter(FileWriter(file, <span class="kw">true</span>))
+    <span class="kw">out</span>.println(textEntry.text.toString())
+    <span class="kw">out</span>.close()
+} <span class="cf">catch</span> (ioe: IOException) {
+    Log.d(TAG, Log.getStackTraceString(ioe))
+}
+
+<span class="co">//reading</span>
+<span class="cf">try</span> {
+    <span class="kw">val</span> <span class="va">dir</span> = getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+    <span class="kw">val</span> <span class="va">file</span> = File(dir, FILE_NAME)
+    <span class="cf">if</span> (!file.exists()) <span class="kw">return</span> <span class="co">//e.g., if file doesn&#39;t exist yet</span>
+    <span class="kw">val</span> <span class="va">reader</span> = BufferedReader(FileReader(file))
+    <span class="kw">val</span> <span class="va">text</span> = StringBuilder()
+
+    <span class="co">//read the file</span>
+    <span class="kw">var</span> <span class="va">line</span>: <span class="kw">String</span>? = reader.readLine()
+    <span class="cf">while</span> (line != <span class="kw">null</span>) {
+        text.append(line + <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)
+        line = reader.readLine()
+    }
+
+    textDisplay.text = text.toString()
+    reader.close()
+
+} <span class="cf">catch</span> (ioe: IOException) {
+    Log.d(TAG, Log.getStackTraceString(ioe))
 }</code></pre></div>
 <p>This will allow us to have our “save” button write the message to the file, and have our “read” button load the message from the file (and display it on the screen)!</p>
 </div>
@@ -555,7 +615,8 @@ We can actually look at the emulator’s file-system and see our files be create
 <p>To review: we sent an <code>Intent</code> with the <code>MediaStore.ACTION_IMAGE_CAPTURE</code> action, and the <em>result</em> of that <code>Intent</code> included an <em>Extra</em> that was a <code>BitMap</code> of a low-quality thumbnail for the image. But if we want to save a higher resolution version of that picture, we’ll need to store that image in the file system!</p>
 <p>To do this, we’re actually going to modify the <code>Intent</code> we <em>send</em> so it includes an additional Extra: a file in which the picture data can be saved. Effectively, we’ll have <em>our Activity</em> allocate some memory for the picture, and then tell the Camera where it can put the picture data that it captures. (Intent envelops are too small to carry entire photos around!)</p>
 <p>Before we send the <code>Intent</code>, we’re going to go ahead and create an (empty) file:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">File</span> file = <span class="kw">null</span>;
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+<span class="bu">File</span> file = <span class="kw">null</span>;
 <span class="kw">try</span> {
     <span class="bu">String</span> timestamp = <span class="kw">new</span> <span class="bu">SimpleDateFormat</span>(<span class="st">&quot;yyyyMMdd_HHmmss&quot;</span>)<span class="fu">.format</span>(<span class="kw">new</span> <span class="bu">Date</span>()); <span class="co">//include timestamp</span>
 
@@ -568,49 +629,29 @@ We can actually look at the emulator’s file-system and see our files be create
 } <span class="kw">catch</span> (<span class="bu">IOException</span> ioe) {
     Log.<span class="fu">d</span>(TAG, Log.<span class="fu">getStackTraceString</span>(ioe));
 }</code></pre></div>
-<p>We will then specify an additional Extra to give that file’s location to the camera: if we use <code>MediaStore.EXTRA_OUTPUT</code> as our Extra’s <em>key</em>, the camera will know what to do with that! However, the extra won’t actually be the <code>File</code> but a <strong>Uri</strong> (recall: the “url” or location of a file). We’re not sending the file itself, but the <strong><em>location</em></strong> of that file (because it’s smaller data to fit in the Intent envelope).</p>
-<ul>
-<li><p>We can get this Uri with the <code>Uri.fromFile(File)</code> method:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//save as instance variable to access later when picture comes back</span>
-<span class="kw">this</span>.<span class="fu">pictureFileUri</span> = Uri.<span class="fu">fromFile</span>(file);</code></pre></div></li>
-<li><p>Then when we get the picture result back from the Camera (in our <code>onActivityResult</code> callback), we can access that file at the saved Uri and use it to display the image! The <code>ImageView.setImageUri()</code> is a fast way of showing an image file.</p></li>
-</ul>
-<p class="alert alert-info">
-Note that when working with images, we can very quickly run out of memory (because images can be huge). So we’ll often want to <a href="https://developer.android.com/topic/performance/graphics/index.html">“scale down”</a> the images as we load them into memory. Additionally, image processing can take a while so we’d like to do it off the main thread (e.g., in an <code>AsyncTask</code>). This can become complicated; the recommended solution is to use a third-party library such as <a href="https://github.com/bumptech/glide">Glide</a>, <a href="http://square.github.io/picasso/">Picasso</a>, or <a href="http://frescolib.org/">Fresco</a>.
-</p>
-</div>
-<div id="sharing-files" class="section level2">
-<h2><span class="header-section-number">10.6</span> Sharing Files</h2>
-<p>Once we have a file storing the image, we can also share that image with other apps!</p>
-<p>As always, in order to interact with other apps, we use an Intent. We can craft an <em>implicit intent</em> for <code>ACTION_SEND</code>, sending a message to any apps that are able to send (share) pictures. We’ll set the data type as <code>image/*</code> to mark this as an image. We will also attach the file as an extra (specifically an <code>EXTRA_STREAM</code>). Again note that we don’t actually put the <em>file</em> in the extra, but rather the <strong>Uri</strong> for the file!</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">Intent intent = <span class="kw">new</span> <span class="fu">Intent</span>(Intent.<span class="fu">ACTION_SEND</span>);
-intent.<span class="fu">setType</span>(<span class="st">&quot;image/*&quot;</span>);
-intent.<span class="fu">putExtra</span>(Intent.<span class="fu">EXTRA_STREAM</span>, <span class="kw">this</span>.<span class="fu">pictureFileUri</span>);
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">var</span> <span class="va">file</span>: File? = <span class="cf">try</span> {
+    <span class="kw">val</span> <span class="va">timestamp</span> = SimpleDateFormat(<span class="st">&quot;yyyyMMdd_HHmmss&quot;</span>).format(Date()) <span class="co">//include timestamp</span>
+    <span class="kw">val</span> <span class="va">dir</span> = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
 
-<span class="kw">if</span> (intent.<span class="fu">resolveActivity</span>(<span class="fu">getPackageManager</span>()) != <span class="kw">null</span>) {
-    <span class="fu">startActivity</span>(intent);
+    <span class="kw">val</span> <span class="va">file</span> = File(dir, <span class="st">&quot;PIC_$timestamp.jpg&quot;</span>)
+    file.createNewFile() <span class="co">//actually make the file!</span>
+    file <span class="co">//return</span>
+} <span class="cf">catch</span> (ioe: IOException) {
+    Log.d(TAG, Log.getStackTraceString(ioe))
+    <span class="kw">null</span> <span class="co">//return</span>
 }</code></pre></div>
-<p>There is one complication though: because we’re saving files in External storage, the app who is executing the <code>ACTION_SEND</code> will need to have permission to read the file (e.g., to access External storage). The Messenger app on the emulator appears to lack this permission by default, so we need to take a slightly different approach:</p>
-<p>Rather than putting the <code>file://</code> Uri in the Intent’s extra, we’ll need to create a <code>content://</code> Uri for a <em>ContentProvider</em> who is able to provide files to anyone who requests them regardless of permissions (the provider grants permission to access its content). Luckily, each image stored in the public directories is automatically tracked by a ContentProvider known as the <a href="https://developer.android.com/reference/android/provider/MediaStore.html"><code>MediaStore</code></a>. It easy to fetch a <code>content://</code> Uri for a particular image file from this provider:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">MediaScannerConnection.<span class="fu">scanFile</span>(<span class="kw">this</span>, <span class="kw">new</span> <span class="bu">String</span>[] { file.<span class="fu">toString</span>(); }, <span class="kw">null</span>,
-        <span class="kw">new</span> MediaScannerConnection.<span class="fu">OnScanCompletedListener</span>() {
-            <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onScanCompleted</span>(<span class="bu">String</span> path, Uri uri) {
-                mediaStoreUri = uri;  <span class="co">//save the content:// Uri for later</span>
-                Log.<span class="fu">v</span>(TAG, <span class="st">&quot;MediaStore Uri: &quot;</span>+uri);
-            }
-        });</code></pre></div>
-<p>The <code>scanFile()</code> method provides a Uri that can be given to the Intent, and that the Messenger app will be able to access! We can generate this Uri as soon as we have a file for the image to be saved in.</p>
-<div id="bonus-sharing-with-a-fileprovider" class="section level3 unnumbered">
-<h3>Bonus: Sharing with a FileProvider</h3>
-<p class="alert alert-warning">
-This section may be out of date and needs further testing for accuracy.
-</p>
-<p>What happens if we try and share an Internal file? You’ll get an error (at the user level!), because the other app (Messenger) doesn’t have permission to read that file!</p>
-<p>There is a way around this though, and it’s by using a <code>ContentProvider</code> again (haha!). A <code>ContentProvider</code> explicitly is about making content available outside of a package (that’s why we declare them in the <code>Manifest</code>). Specifically, a <code>ContentProvider</code> can convert a set of <code>Files</code> into a set of data contents (e.g., accessible with the <code>content://</code> protocol) that can be used and returned and understood by other apps!</p>
+<ul>
+<li>Since we’re creating a file in external storage, make sure you ask for permission first!!</li>
+</ul>
+<div id="fileproviders" class="section level3">
+<h3><span class="header-section-number">10.5.1</span> FileProviders</h3>
+<p>We will then specify an additional Extra to give that file’s location to the camera: if we use <code>MediaStore.EXTRA_OUTPUT</code> as our Extra’s <em>key</em>, the camera will know what to do with that! However, the extra won’t actually be the <code>File</code> but a <strong>Uri</strong> (recall: the “url” or location of a file). We’re not sending the file itself, but the <strong><em>location</em></strong> of that file (because it’s smaller data to fit in the Intent envelope).</p>
+<p>Here’s the tricky part: if we try and share the absolute path to the file as a Uri, we’ll get an error because we’re “leaking” information—that is, we’re trying to let another app access a file that they may not have permission to read! We need to make sure that the Camera actually has access to where the file happens to live (it does because the file is is in public storage, but Android doesn’t know that—it just sees that you’re sharing an absolute path).</p>
+<p>Rather than putting the <code>file://</code> Uri in the Intent’s extra, we’ll need to create a <code>content://</code> Uri for a <em>ContentProvider</em> who is able to provide files to anyone who requests them regardless of permissions (the provider grants permission to access its content). A <code>ContentProvider</code> explicitly is about making content available outside of a package. Specifically, a specialized <code>ContentProvider</code> called a <a href="https://developer.android.com/reference/android/support/v4/content/FileProvider"><code>FileProvider</code></a> can convert a set of <code>Files</code> into a set of data contents (e.g., accessible with the <code>content://</code> protocol) that can be used and returned and understood by other apps!</p>
 <ul>
 <li>It’s kind of like a “File Server” in that respect!</li>
 </ul>
-<p>This is what the <code>MediaStore</code> provider is doing for us with images. The question is: how do we do this for generic file types? Luckily, Android includes a <a href="https://developer.android.com/reference/android/support/v4/content/FileProvider.html"><code>FileProvider</code></a> class in the support library that does exactly this work.</p>
 <p>Setting up a <code>FileProvider</code> is luckily not too complex, though it has a couple of steps. You will need to declare the <code>&lt;provider&gt;</code> inside the Manifest (see the <a href="https://developer.android.com/training/secure-file-sharing/setup-sharing.html">guide link</a> for an example).</p>
 <div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;provider</span>
 <span class="ot">    android:name=</span><span class="st">&quot;android.support.v4.content.FileProvider&quot;</span>
@@ -619,23 +660,53 @@ This section may be out of date and needs further testing for accuracy.
 <span class="ot">    android:grantUriPermissions=</span><span class="st">&quot;true&quot;</span><span class="kw">&gt;</span>
     <span class="kw">&lt;meta-data</span>
 <span class="ot">        android:name=</span><span class="st">&quot;android.support.FILE_PROVIDER_PATHS&quot;</span>
-<span class="ot">        android:resource=</span><span class="st">&quot;@xml/fileprovider&quot;</span> <span class="kw">/&gt;</span>
+<span class="ot">        android:resource=</span><span class="st">&quot;@xml/filepaths&quot;</span> <span class="kw">/&gt;</span>
 <span class="kw">&lt;/provider&gt;</span></code></pre></div>
 <p>The attributes you will need to specify are:</p>
 <ul>
 <li><p><code>android:authority</code> should be your package name followed by <code>.fileprovider</code> (e.g., <code>edu.uw.myapp.fileprovider</code>). This says what source/domain is granting permission for others to use the file.</p></li>
-<li><p>The child <code>&lt;meta-data&gt;</code> tag includes an <code>androd:resource</code> attribute that should point to an XML resource, of type <code>xml</code> (the same as used for your SharedPreferences). <em>You will need to create this file!</em> The contents of this file will be a list of what <em>subdirectories</em> you want the <code>FileProvider</code> to be able to provide. It will look something like:</p></li>
+<li><p>The child <code>&lt;meta-data&gt;</code> tag includes an <code>android:resource</code> attribute that should point to an XML resource, of type <code>xml</code> (the same as used for your SharedPreferences). <em>You will need to create this file!</em> The contents of this file will be a list of what <em>subdirectories</em> you want the <code>FileProvider</code> to be able to provide. It will look something like:</p></li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;utf-8&quot;<span class="kw">?&gt;</span>
 <span class="kw">&lt;paths</span><span class="ot"> xmlns:android=</span><span class="st">&quot;http://schemas.android.com/apk/res/android&quot;</span><span class="kw">&gt;</span>
-    <span class="kw">&lt;files-path</span><span class="ot"> name=</span><span class="st">&quot;my_file&quot;</span><span class="ot"> path=</span><span class="st">&quot;files/&quot;</span> <span class="kw">/&gt;</span>
+    <span class="co">&lt;!--shared from internal storage --&gt;</span>
+    <span class="kw">&lt;files-path</span><span class="ot"> path=</span><span class="st">&quot;images/&quot;</span><span class="ot"> name=</span><span class="st">&quot;myfiles&quot;</span> <span class="kw">/&gt;</span>
+
+    <span class="co">&lt;!--shared external storage --&gt;</span>
+    <span class="kw">&lt;external-path</span><span class="ot"> path=</span><span class="st">&quot;Documents/&quot;</span><span class="ot"> name=</span><span class="st">&quot;documents&quot;</span> <span class="kw">/&gt;</span>
+    <span class="kw">&lt;external-path</span><span class="ot"> path=</span><span class="st">&quot;Pictures/&quot;</span><span class="ot"> name=</span><span class="st">&quot;pictures&quot;</span> <span class="kw">/&gt;</span>
+
 <span class="kw">&lt;/paths&gt;</span></code></pre></div>
-<p>The <code>&lt;files-path&gt;</code> entry refers to a subdirectory inside the Internal Storage files (the same place that <code>.getFilesDir()</code> points to), with the <code>path</code> specifying the name of the subdirectory.</p>
+<p>The <code>&lt;files-path&gt;</code> entry refers to a subdirectory for Internal Storage files (the same place that <code>.getFilesDir()</code> points to), and <code>&lt;external-path&gt;</code> to refer to the subdirectory for External Storage files. The <code>path</code> attributes specifies the name of the subdirectory inside that storage location, and <code>name</code> is the name that the FileProvider will specify the path as (think: a public facing path).</p>
 <p>Once you have the provider specified, you can use it to get a <code>Uri</code> to the “shared” version of the file using:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">Uri fileUri = FileProvider.<span class="fu">getUriForFile</span>(context, <span class="st">&quot;edu.uw.myapp.fileprovider&quot;</span>, fileToShare);</code></pre></div>
-<p>(note that the second parameter is the “authority” you specified in your <code>&lt;provider&gt;</code> in the Manifest). You can then use this <code>Uri</code> as the <code>EXTRA_STREAM</code> extra in the Intent that you want to share!</p>
-
+<p>(note that the second parameter is the “authority” you specified in your <code>&lt;provider&gt;</code> in the Manifest). You can then use this <code>Uri</code> as the <code>MediaStore.EXTRA_OUTPUT</code> extra to tell the Camera where to save the picture it takes!</p>
+<ul>
+<li><p>You can also use it as an <code>EXTRA_STREAM</code> extra in the Intent for more general file sharing.</p></li>
+<li><p>Then when we get the picture result back from the Camera (in our <code>onActivityResult</code> callback), we can access that file at the saved Uri and use it to display the image! The <code>ImageView.setImageUri()</code> is a fast way of showing an image file.</p>
+<p>You can also use an Intent to make sure a photo is <a href="https://developer.android.com/training/camera/photobasics#TaskGallery">added to the phone’s Gallery</a>.</p></li>
+</ul>
+<p class="alert alert-info">
+Note that when working with images, we can very quickly run out of memory (because images can be huge). So we’ll often want to <a href="https://developer.android.com/topic/performance/graphics/index.html">“scale down”</a> the images as we load them into memory. Additionally, image processing can take a while so we’d like to do it off the main thread (e.g., in an <code>AsyncTask</code>). This can become complicated; the recommended solution is to use a third-party library such as <a href="https://github.com/bumptech/glide">Glide</a>, <a href="http://square.github.io/picasso/">Picasso</a>, or <a href="http://frescolib.org/">Fresco</a>.
+</p>
 </div>
+</div>
+<div id="sharing-files" class="section level2">
+<h2><span class="header-section-number">10.6</span> Sharing Files</h2>
+<p>Once we have a file storing the image, we can also share that image with other apps!</p>
+<p>As always, in order to interact with other apps, we use an Intent. We can craft an <em>implicit intent</em> for <code>ACTION_SEND</code>, sending a message to any apps that are able to send (share) pictures. We’ll set the data type as <code>image/*</code> to mark this as an image. We will also attach the file as an extra (specifically an <code>EXTRA_STREAM</code>). Again note that we don’t actually put the <em>file</em> in the extra, but rather the <strong>Uri</strong> for the file—the one provided by the <code>FileProvider</code>!</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+Intent intent = <span class="kw">new</span> <span class="fu">Intent</span>(Intent.<span class="fu">ACTION_SEND</span>);
+intent.<span class="fu">setType</span>(<span class="st">&quot;image/*&quot;</span>);
+intent.<span class="fu">putExtra</span>(Intent.<span class="fu">EXTRA_STREAM</span>, <span class="kw">this</span>.<span class="fu">pictureFileUri</span>);
+
+<span class="kw">if</span> (intent.<span class="fu">resolveActivity</span>(<span class="fu">getPackageManager</span>()) != <span class="kw">null</span>) {
+    <span class="fu">startActivity</span>(intent);
+}</code></pre></div>
+<p>If you’re sharing a file that is normally private (e.g., from Internal Storage or private External Storage), you’ll also need to make sure to that the “target” Activity has permission to read the file. You can grant this by adding a “flag” to the intent:</p>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin">intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);</code></pre></div>
+<p>And with that, you should be able to take a picture, save it publicly (or privately), but still share it with the world!</p>
+
 </div>
 </div>
 <div class="footnotes">
