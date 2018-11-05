@@ -25,7 +25,7 @@
 <meta name="author" content="Joel Ross">
 
 
-<meta name="date" content="2018-10-31">
+<meta name="date" content="2018-11-05">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -387,22 +387,27 @@ This lecture references code found at <a href="https://github.com/info448/lectur
 <h2><span class="header-section-number">9.1</span> Content Providers</h2>
 <p>The example starter code uses a <code>ListView</code> that shows a list of words. Recall that a <code>ListView</code> utilizes the <strong>model-view-controller</strong> architecture… and in this case, the “model” (data) is a hard-coded list of array of words. But there are other lists of words as well! Entire databases of words! Previous lectures have discussed how to use <em>network requests</em> to access online data APIs, but there are also databases (of words no less) built into your Android phone.</p>
 <p>For example, Android keeps track of the list of the spellings of “non-standard” words in what is called the <strong>User Dictionary</strong>. You can view this list on the device at <code>Settings &gt; Language &amp; Input &gt; Personal Dictionary</code>. You can even use this Settings interface to add new words to the dictionary (e.g., “embiggen”, “cromulent”, “covfefe”).</p>
-<p>Note that the User Dictionary keeps track of a <a href="https://developer.android.com/guide/topics/providers/content-provider-basics.html#ClientProvider"><strong>database</strong></a> of words. You can think of this database as being like a single SQL table: it’s a set of <em>entries</em> (rows) each of which have some <em>values</em> (columns). The primary key of the table is named (by convention) <strong><code>ID</code></strong>.</p>
+<p class="alert alert-danger">
+For security reasons, the User Dictionary is only available on devices running <strong>API 22 (Lollipop) </strong>or earlier**. This specific example will only work on older devices, but the concepts and code for accessing databases in general will apply to all versions. You can test this specific example using an emulator running API 22 or earlier.
+</p>
+<p>Note that the User Dictionary keeps track of a <a href="https://developer.android.com/guide/topics/providers/content-provider-basics.html#ClientProvider"><strong>database</strong></a> of words. You can think of this database as being like a single SQL table (or CSV spreadsheet, or R data frame): it’s a set of <em>entries</em> (rows) each of which have some <em>values</em> (columns). The primary key of the table is named (by convention) <strong><code>ID</code></strong>.</p>
 <p>Since this data is stored in (essentially) a simple SQL table, it is possible for us to access and modify it programmatically&amp;mash;moreover, the Android framework allows us to do this without needing to know or write SQL! For example, we can access this list of words in order to show them in the ListView.</p>
 <p class="alert alert-info">
 While you don’t need to know SQL to utilize a built-in database like the User Dictionary, it helps to have a passing familiarity with relational databases and their terminology to intuit about the organization of the data.
 </p>
 <p>To do this, we’ll need to request permission to access the database, just as we asked permission to access the Internet. Include the following in the <em>Manifest</em>:</p>
 <div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;uses-permission</span><span class="ot"> android:name=</span><span class="st">&quot;android.permission.READ_USER_DICTIONARY&quot;</span><span class="kw">/&gt;</span></code></pre></div>
-<p>Although the words are stored in a database, we don’t know the <em>exact</em> format of this database (e.g., the exact table or column names, or even whether it is an SQL database or just a <code>.csv</code> file!). We want to avoid having to write code that only works with a specific format, especially as the words may be stored in different kinds of databases on different devices or across different versions of Android. (The Android framework does include support for working directly with a local <code>SQLite</code> database, as discussed in the next chapter).</p>
+<p>Although the words are stored in a database, we don’t know the <em>exact</em> format of this database (e.g., the exact table or column names, or even whether it is an SQL database or just a <code>.csv</code> file!). We want to avoid having to write code that only works with a specific format, especially as the words may be stored in different kinds of databases on different devices or across different versions of Android. (The Android framework does include support for working directly with a local <code>SQLite</code> database, as discussed in a later chapter).</p>
 <p>In order to avoid relying on the specific format of how some data is stored, Android offers an <strong><em>abstraction</em></strong> in the form of a <a href="https://developer.android.com/guide/topics/providers/content-providers.html"><strong>Content Provider</strong></a><a href="#fn33" class="footnoteRef" id="fnref33"><sup>33</sup></a>. A Content Provider offers an interface to interact with structured data, whether that data is stored in a database, in a file, in <em>multiple</em> files, online, or somewhere else. You can thus think of “a Content Provider” as meaning “a data source” (e.g., the source/provider of content)!</p>
 <ul>
-<li>It is possible to create your own Content Providers (described in a later chapter), but this lecture focuses purely on <em>utilizing</em> existing Providers.</li>
+<li><p>Thinking of a Content Provider as a “server” you access is a decent metaphor.</p></li>
+<li><p>It is possible to create your own Content Providers (described in a later chapter), but this lecture focuses purely on <em>utilizing</em> existing Providers.</p></li>
 </ul>
 <p>All Content Providers (data sources) have a <strong>URI</strong> (<a href="https://en.wikipedia.org/wiki/Uniform_Resource_Identifier">Universal Resource Identifier</a>, a generalization of a URL used for resources not necessarily on the Internet). It is possible to <em>query</em> this URI, similar in concept to how web APIs are accessed via queries to their URI endpoints. In particular, Content Provider URIs utilize the <strong><code>content://</code></strong> protocol (instead of <code>https://</code>), since the their data is accessed as via “content requests” rather than “HTTP requests”.</p>
 <p>The <code>URI</code> for the Dictionary’s content is defined by the constant <a href="https://developer.android.com/reference/android/provider/UserDictionary.Words.html"><code>UserDictionary.Words.CONTENT_URI</code></a>. We utilize constants to refer to URIs and paths to make it easier to refer to them and to generalize across devices that may have different directory structures.</p>
 <p>We are able to access this Content Provider via a <a href="https://developer.android.com/reference/android/content/ContentResolver.html"><code>ContentResolver</code></a>. This class provides methods for accessing the data in a provider (represented as a <code>ContentProvider</code> object). Each Context has a singleton ContentResolver, which is accessed via the <code>getContentResolver()</code> method (note that for a Fragment, the Context is the containing Activity). The ContentResolver’s methods support the basic <a href="https://en.wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD</a> operations: <code>insert()</code> (create), <code>query()</code> (read), <code>update()</code>, and <code>delete()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ContentResolver resolver = <span class="fu">getContentResolver</span>();</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+ContentResolver resolver = <span class="fu">getContentResolver</span>();</code></pre></div>
 <p>ContentResolver methods take multiple parameters, supporting the different options available in a generic SQL query. For example, consider the the <a href="https://developer.android.com/reference/android/content/ContentResolver.html#query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String)"><code>query()</code></a> method:</p>
 <div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="fu">getContentResolver</span>().<span class="fu">query</span>(
     uri,              <span class="co">// The content URI</span>
@@ -419,23 +424,37 @@ While you don’t need to know SQL to utilize a built-in database like the User 
 <li><p>Be sure to always select the <code>_ID</code> primary key: it will be needed later!</p></li>
 </ul>
 <p>The other parameters can be used to customize the <code>SELECT</code> statement. The “selection” (<code>WHERE</code>) clause needs to parameters: the second are values that will be escaped against <a href="https://en.wikipedia.org/wiki/SQL_injection">SQL injection attacks</a>. Passing <code>null</code> for any of these parameters will cause the clause to be ignored:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">String</span>[] projection = <span class="kw">new</span> <span class="bu">String</span>[] {
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+<span class="bu">String</span>[] projection = <span class="kw">new</span> <span class="bu">String</span>[] {
     UserDictionary.<span class="fu">Words</span>.<span class="fu">WORD</span>,
     UserDictionary.<span class="fu">Words</span>.<span class="fu">FREQUENCY</span>,
     UserDictionary.<span class="fu">Words</span>._ID
 };
 resolver.<span class="fu">query</span>(UserDictionary.<span class="fu">Words</span>.<span class="fu">CONTENT_URI</span>, projection, <span class="kw">null</span>, <span class="kw">null</span>, <span class="kw">null</span>);</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">val</span> <span class="va">projection</span> = arrayOf(
+    UserDictionary.Words.WORD, 
+    UserDictionary.Words.FREQUENCY, 
+    UserDictionary.Words._ID
+)
+contentResolver.query(UserDictionary.Words.CONTENT_URI, projection, <span class="kw">null</span>, <span class="kw">null</span>, <span class="kw">null</span>)</code></pre></div>
 <p>So overall, the query is breaking apart the components SQL <code>SELECT</code> statement into different pieces as parameters to a method, so you don’t <em>quite</em> have to write the selection yourself. Moreover, this method <em>abstracts</em> the specific query language, allowing the same queries to be used on different formats of database (<code>SQLite</code>, <code>PostgreSQL</code>, files, etc).</p>
 </div>
 <div id="cursors" class="section level2">
 <h2><span class="header-section-number">9.2</span> Cursors</h2>
 <p>The <code>ContentResolver#query()</code> method returns a <a href="http://developer.android.com/reference/android/database/Cursor.html"><strong><code>Cursor</code></strong></a>. A <code>Cursor</code> provides an interface to the list of records in a database (e.g., those returned by the query). A <code>Cursor</code> also behaves like an <code>Iterator</code> in Java: it keeps track of which record is currently being accessed (e.g., what the <code>i</code> would be in a for loop). You can think of it as a “pointer” to a particular record, like the cursor on a screen.</p>
 <p>We call methods on the <code>Cursor</code> to specify which record we want it to “point” to, as well as to fetch values from the record object at that spot in the list. For example:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">cursor.<span class="fu">moveToFirst</span>(); <span class="co">//move to the first item</span>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+cursor.<span class="fu">moveToFirst</span>(); <span class="co">//move to the first item</span>
 <span class="bu">String</span> field0 = cursor.<span class="fu">getString</span>(<span class="dv">0</span>); <span class="co">//get the first field (column you specified) as a String</span>
 <span class="bu">String</span> word = cursor.<span class="fu">getString</span>(cursor.<span class="fu">getColumnIndexOrThrow</span>(<span class="st">&quot;word&quot;</span>)); <span class="co">//get the &quot;word&quot; field as a String</span>
 cursor.<span class="fu">moveToNext</span>(); <span class="co">//go to the next item</span></code></pre></div>
-<p>The nice thing about <code>Cursors</code> though is that they can easily be fed into <code>AdapterViews</code> by using a <a href="http://developer.android.com/reference/android/widget/CursorAdapter.html"><code>CursorAdapter</code></a> (as opposed to the <code>ArrayAdapter</code> we’ve used previously). The <a href="http://developer.android.com/reference/android/widget/SimpleCursorAdapter.html"><strong><code>SimpleCursorAdapter</code></strong></a> is a concrete implementation that is almost as easy to use as an <code>ArrayAdapter</code>:</p>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+cursor.moveToFirst() <span class="co">//move to the first item</span>
+<span class="kw">val</span> <span class="va">field0</span> = cursor.getString(<span class="dv">0</span>) <span class="co">//get the first field (column you specified) as a String</span>
+<span class="kw">val</span> <span class="va">word</span> = cursor.getString(cursor.getColumnIndexOrThrow(<span class="st">&quot;word&quot;</span>)) <span class="co">//get the &quot;word&quot; field as a String</span>
+cursor.moveToNext() <span class="co">//go to the next item</span></code></pre></div>
+<p>The nice thing about <code>Cursors</code> though is that they can easily be fed into <code>AdapterViews</code> by using a <a href="http://developer.android.com/reference/android/widget/CursorAdapter.html"><code>CursorAdapter</code></a> (as opposed to the <code>ArrayAdapter</code> we’ve used previously). The <a href="http://developer.android.com/reference/android/widget/SimpleCursorAdapter.html"><strong><code>SimpleCursorAdapter</code></strong></a> is a concrete implementation that is almost as easy to use as an <code>ArrayAdapter</code>.</p>
 <p>You instantiate a new <code>SimpleCursorAdapter</code>, passing it:</p>
 <ol style="list-style-type: decimal">
 <li>A <code>Context</code> for loading resources</li>
@@ -445,20 +464,33 @@ cursor.<span class="fu">moveToNext</span>(); <span class="co">//go to the next i
 <li>A matching list of View resource <code>ids</code> (which should all be <code>TextViews</code>) to assign each column’s value to. This is the “mapping” that the Adapter will perform (from projection columns to TextView contents).</li>
 <li>Any additional option flags (<code>0</code> means no flags, and is the correct option for us).</li>
 </ol>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">adapter = <span class="kw">new</span> <span class="fu">SimpleCursorAdapter</span>(
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+adapter = <span class="kw">new</span> <span class="fu">SimpleCursorAdapter</span>(
                 <span class="kw">this</span>,
                 R.<span class="fu">layout</span>.<span class="fu">list_item_layout</span>, <span class="co">//item to inflate</span>
                 cursor, <span class="co">//cursor to show</span>
                 <span class="kw">new</span> <span class="bu">String</span>[] {UserDictionary.<span class="fu">Words</span>.<span class="fu">WORD</span>, UserDictionary.<span class="fu">Words</span>.<span class="fu">FREQUENCY</span>}, <span class="co">//fields to display</span>
                 <span class="kw">new</span> <span class="dt">int</span>[] {R.<span class="fu">id</span>.<span class="fu">txt_list_item</span>, R.<span class="fu">id</span>.<span class="fu">txt_item_freq</span>},                       <span class="co">//where to display them</span>
                 <span class="dv">0</span>); <span class="co">//flags</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+adapter = SimpleCursorAdapter(
+        <span class="kw">this</span>,
+        R.layout.list_item_layout, <span class="co">//item to inflate</span>
+        cursor, <span class="co">//cursor to show</span>
+        arrayOf(UserDictionary.Words.WORD, UserDictionary.Words.FREQUENCY), <span class="co">//fields to display</span>
+        intArrayOf(R.id.txt_item_word, R.id.txt_item_freq), <span class="co">//where to display them</span>
+        <span class="dv">0</span> <span class="co">//flags</span>
+)</code></pre></div>
 <p>Then we can use this adapter for the ListView in place of the <code>ArrayAdapter</code>!</p>
 </div>
 <div id="loaders" class="section level2">
 <h2><span class="header-section-number">9.3</span> Loaders</h2>
 <p>In order to get the <code>Cursor</code> to pass into the adapter, we need to <code>.query()</code> the database. But we want to do this a lot in fact, every time the database updates, we’d like to be able to query it again so we can update the Adapter and have the changes show up! Additionally, accessing a database can be <em>slow</em> (it requires disk access, structuring and submitting SQL calls, and depending on the complexity of the database those queries can take time). Thus, as with network requests, we’d like to perform this query on a <em>background thread</em> so that it doesn’t block our application and cause it to stall.</p>
 <p>In order to automatically update your list with new data loaded on a background thread, we’re going to use a class called a <a href="https://developer.android.com/guide/components/loaders.html"><code>Loader</code></a>. This is basically a wrapper around <a href="https://developer.android.com/reference/android/os/AsyncTask.html"><code>ASyncTask</code></a> (described in a later chapter), but one that lets you execute a background task repeatedly <em>whenever the data source changes</em>. In particular, Android provides a <a href="http://developer.android.com/reference/android/content/CursorLoader.html"><code>CursorLoader</code></a> specifically used to load data from ContentProviders through Cursors—whenever the content changes, a new Cursor is produced which can be “swapped” into the adapter.</p>
-<p>To use a <code>CursorLoader</code>, we need to specify that our Activity implements the <a href="https://developer.android.com/reference/android/support/v4/app/LoaderManager.LoaderCallbacks.html"><code>LoaderManager.LoaderCallbacks&lt;Cursor&gt;</code></a> interface—basically saying that this fragment can react to Loader events.</p>
+<p class="alert alert-info">
+Loaders are being deprecated in Android P (API 28), in favor of the “Architecture” package classes such as <code>ViewModel</code> and <code>LiveData</code>. But many of the same ideas will apply.
+</p>
+<p>To use a <code>CursorLoader</code>, we need to specify that our Activity implements the <a href="https://developer.android.com/reference/android/support/v4/app/LoaderManager.LoaderCallbacks.html"><code>LoaderManager.LoaderCallbacks&lt;Cursor&gt;</code></a> interface—basically saying that this Fragment can react to Loader events.</p>
 <!-- - Loaders need to work with Fragments, unless the Activity subclasses [`FragmentActivity`](https://developer.android.com/reference/android/support/v4/app/FragmentActivity.html) (as `AppCompatActivity` does) and thereby provides the "Fragment" capabilities needed to use a `Loader`. So we can use Loaders in _our_ Activities or Fragments. -->
 <p>We will need to fill in the interfaces callback functions in order to use the <code>CursorLoader</code>:</p>
 <ul>
@@ -487,7 +519,8 @@ cursor.<span class="fu">moveToNext</span>(); <span class="co">//go to the next i
 <div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;uses-permission</span><span class="ot"> android:name=</span><span class="st">&quot;android.permission.WRITE_USER_DICTIONARY&quot;</span><span class="kw">/&gt;</span></code></pre></div></li>
 </ul>
 <p>To <em>insert</em> (create) a new Word into the ContentProvider, we call the <code>.insert()</code> method on the <code>ContentResolver</code>. It is passed a <a href="http://developer.android.com/reference/android/content/ContentValues.html"><code>ContentValues</code></a> object, which is a HashMap almost exactly like a <code>Bundle</code> (but it only supports values that can be entered into Content Providers, e.g., no Parcelables).</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ContentValues newValues = <span class="kw">new</span> <span class="fu">ContentValues</span>();
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+ContentValues newValues = <span class="kw">new</span> <span class="fu">ContentValues</span>();
 newValues.<span class="fu">put</span>(UserDictionary.<span class="fu">Words</span>.<span class="fu">WORD</span>, inputText.<span class="fu">getText</span>().<span class="fu">toString</span>());
 newValues.<span class="fu">put</span>(UserDictionary.<span class="fu">Words</span>.<span class="fu">FREQUENCY</span>, <span class="dv">100</span>);
 newValues.<span class="fu">put</span>(UserDictionary.<span class="fu">Words</span>.<span class="fu">APP_ID</span>, <span class="st">&quot;edu.uw.loaderdemo&quot;</span>);
@@ -497,19 +530,39 @@ Uri newUri = <span class="fu">getContentResolver</span>().<span class="fu">inser
        UserDictionary.<span class="fu">Words</span>.<span class="fu">CONTENT_URI</span>,   <span class="co">// the user dictionary content URI!</span>
        newValues                   <span class="co">// the values to insert</span>
 );</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">val</span> <span class="va">newValues</span> = ContentValues()
+newValues.put(UserDictionary.Words.WORD, inputText.text.toString())
+newValues.put(UserDictionary.Words.FREQUENCY, <span class="dv">100</span>)
+newValues.put(UserDictionary.Words.APP_ID, <span class="st">&quot;edu.uw.loaderdemo&quot;</span>)
+newValues.put(UserDictionary.Words.LOCALE, <span class="st">&quot;en_US&quot;</span>)
+
+<span class="kw">val</span> <span class="va">newUri</span> = contentResolver.insert(
+        UserDictionary.Words.CONTENT_URI, <span class="co">// the user dictionary content URI!</span>
+        newValues                   <span class="co">// the values to insert</span>
+)</code></pre></div>
 <ul>
 <li>The <code>insert()</code> function returns the URI for the <em>newly inserted row</em>, e.g. if you want to be able to query and display that content later.</li>
 </ul>
 <p>A similar approach is used to <em>update</em> and modify an entry in the Content Provider: call the <code>.update()</code> method and pass in a <code>ContentValues</code> bundle of values to change:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">ContentValues newValues = <span class="kw">new</span> <span class="fu">ContentValues</span>();
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">//java</span>
+ContentValues newValues = <span class="kw">new</span> <span class="fu">ContentValues</span>();
 newValues.<span class="fu">put</span>(UserDictionary.<span class="fu">Words</span>.<span class="fu">FREQUENCY</span>, newFrequency);
 
 <span class="fu">getContentResolver</span>().<span class="fu">update</span>(
           ContentUris.<span class="fu">withAppendedId</span>(UserDictionary.<span class="fu">Words</span>.<span class="fu">CONTENT_URI</span>, id),
           newValues,
           <span class="kw">null</span>, <span class="kw">null</span>); <span class="co">//no selection</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode kotlin"><code class="sourceCode kotlin"><span class="co">//kotlin</span>
+<span class="kw">val</span> <span class="va">newValues</span> = ContentValues()
+newValues.put(UserDictionary.Words.FREQUENCY, newFrequency)
+
+contentResolver.update(
+        ContentUris.withAppendedId(UserDictionary.Words.CONTENT_URI, id),
+        newValues, <span class="kw">null</span>, <span class="kw">null</span> <span class="co">//no selection</span>
+)</code></pre></div>
 <ul>
-<li>Note that we make sure to update only that particular item by specifying the <em>URI of that item</em>. We do this by constructing a new URI representing/identifying that item, effectively by appending <code>&quot;/:id&quot;</code> to the URI. This means that we don’t need to use the selection criteria (though we could do that as well).</li>
+<li>Note that we make sure to update only that particular item by specifying the <em>URI of that item</em>. We do this by constructing a new URI representing/identifying that item, effectively by appending an <code>&quot;/:id&quot;</code> path parameter to the URI. This means that we don’t need to use the selection criteria (though we could do that as well).</li>
 </ul>
 <p>That covers how to utilize and interact with a Content Provider (as a <em>client</em> of that Provider). <a href="databases.html#databases">A later lecture</a> will cover how to implement a Provider for a custom database.</p>
 
