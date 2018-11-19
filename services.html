@@ -379,9 +379,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="services" class="section level1">
 <h1><span class="header-section-number">Lecture 13</span> Threads and Services</h1>
-<p class="alert alert-warning">
-This lecture is currently under revision.
-</p>
 <p>This lecture discusses a component of Android development that is <strong><em>not</em></strong> immediately visible to users: <a href="https://developer.android.com/guide/components/services.html"><strong>Services</strong></a><a href="#fn40" class="footnoteRef" id="fnref40"><sup>40</sup></a>. <em>Services</em> are sort of like Activities that don’t have a user interface or user interaction directly tied to them. Services can be launched by Activities or Applications, but then do their own thing in the background <em>even after the starting component is closed</em>. Once a Service is started, it keeps running until it is explicitly stopped (Services can be destroyed by the OS to save memory, similar to an Activity, but Services have higher <a href="https://developer.android.com/guide/topics/processes/process-lifecycle.html">“priority”</a> and so aren’t killed as readily).</p>
 <p>Some common uses for a Service include:</p>
 <ul>
